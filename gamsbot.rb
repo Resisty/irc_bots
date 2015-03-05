@@ -5,12 +5,13 @@ require 'cgi'
 require 'json'
 require 'uri'
 require 'net/http'
+require 'yaml'
 
 # This bot connects to urban dictionary and returns the first result
 # for a given query, replying with the result directly to the sender
 
 bot = Cinch::Bot.new do
-  cnf = YAML::load_file(File.join(__dir__, 'config.yml'))
+  cnf = YAML.load_file('config.yaml')
   configure do |c|
     c.server   = cnf['gamsbot']['server']
     c.nick     = cnf['gamsbot']['nick']

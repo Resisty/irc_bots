@@ -11,11 +11,11 @@ require 'yaml'
 # for a given query, replying with the result directly to the sender
 
 bot = Cinch::Bot.new do
-  cnf = YAML::load_file(File.join(__dir__, 'config.yml'))
+  cnf = YAML.load_file('config.yaml')
   configure do |c|
     c.server   = cnf['panicbutt']['server']
     c.nick     = cnf['panicbutt']['nick']
-    c.channels = cnf['panicbugg']['channels']
+    c.channels = cnf['panicbutt']['channels']
   end
 
   helpers do
