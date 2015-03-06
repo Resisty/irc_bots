@@ -84,6 +84,13 @@ bot = Cinch::Bot.new do
       return text
     end
 
+    def manatee()
+      num = rand(33) + 1
+      url = "calmingmanatee.com/img/manatee%s.jpg" % num
+      return url
+    end
+
+
     def butts_me(search)
       search = search.split(/ /).join('+')
       url = 'http://api.giphy.com/v1/gifs/random?api_key=dc6zaTOxFJmzC&tag=' + search
@@ -98,14 +105,26 @@ bot = Cinch::Bot.new do
       end
     end
 
-    def dice_roll(numdice)
+    def dice_roll(dicestr)
+      sets = dicestr.scan(/[0-9]+d[0-9]+/)
       dice = []
-      num = numdice.to_i
-      (1..num).each do |n|
-        dice.push(rand(6) + 1)
+      if sets.empty?
+        num = dicestr.to_i
+        (1..num).each do |n|
+          dice.push(rand(6) + 1)
+        end
+        return dice
+      else
+        sets.each do |dset|
+          numdice, sizedie = dset.split('d')
+          dsetstr = "d#{sizedie}s: "
+          dsetstr += (1..numdice.to_i).collect{|x| rand(sizedie.to_i) + 1}.join(', ')
+          dice.push(dsetstr)
+        end
+        return dice
       end
-      return dice
     end
+
 
     def spin_wheel()
       values = (5..100).step(5)
@@ -113,6 +132,11 @@ bot = Cinch::Bot.new do
     end
   end
 
+  on :message, /.*/ do |m|
+    if m.message =~ /^(?!\u{0001}ACTION).+[A-Z]{3}.*$/
+      m.reply(manatee(), true)
+    end
+  end
 
   on :message, /^panicbutt tell (.+) to come to Portland/i do |m, who|
     if who == "me"
@@ -122,12 +146,10 @@ bot = Cinch::Bot.new do
     end
   end
 
-  on :message, /^panicbutt roll dice($|\s*[0-9]*)/i do |m, n|
+  on :message, /^panicbutt roll dice($|(\s*[\w]*)*)/i do |m, n|
     if n == ''
-      puts 'n was empty!'
       m.reply(dice_roll('1').join(', '), true)
     else
-      puts 'n was NOT empty!'
       m.reply(dice_roll(n).join(', '), true)
     end
   end
