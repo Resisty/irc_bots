@@ -30,8 +30,10 @@ bot = Cinch::Bot.new do
   end
 
   on :message, /.*/ do |m|
-    if m.message == m.message.upcase && m.message =~ /[A-Z]{3}/ && m.message.length > 4
-      m.reply(manatee(), true)
+    msg = m.message
+    msg, rep = parse_message(msg)
+    if msg
+      m.reply(msg, rep)
     end
   end
 

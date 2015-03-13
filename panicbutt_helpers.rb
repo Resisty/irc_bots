@@ -25,6 +25,20 @@ $jeff_crisis_levels = {'critical' => {'text' => 'black',
                                           'bg' => "\n background-image: url(//brianauron.info/img/tux.gif);\nbackground-size: cover;"}}
 $jeff_crisis_level = 'critical'
 
+def parse_message(msg)
+  if msg == msg.upcase && msg =~ /[A-Z]{3}/ && msg.length > 4
+    return manatee(), true
+  elsif msg =~ /^panicbutt(|,) enhance$/
+    return "/me types furiously. \"Enhance.\"", false
+  elsif msg =~ /^panicbutt what is Jeff$/i
+    return $jeff_crisis_level, true
+  elsif msg =~ /^fuck (you|off)(|,) panicbutt$/
+    return ":C", true
+  else
+    return nil, nil
+  end
+end
+
 def edit_html(level)
   wordcolor = $jeff_crisis_levels[level]['text']
   bgcolor = $jeff_crisis_levels[level]['bg']
@@ -102,13 +116,14 @@ def dice_roll(dicestr)
     puts "Modifier is EMPTY\n\n"
     mod = 0
   end
-  puts "The modifier is #{mod}"
+  puts "The MODIFIER is #{mod}"
   dice = []
   if sets.empty?
     num = dicestr.to_i
     (1..num).each do |n|
       dice.push(rand(6) + 1 + mod)
     end
+    puts "The empty-setted dice are: #{dice}"
     return dice
   else
     sets.each do |dset|
@@ -117,6 +132,7 @@ def dice_roll(dicestr)
       dsetstr += (1..numdice.to_i).collect{|x| rand(sizedie.to_i) + 1 + mod}.join(', ')
       dice.push(dsetstr)
     end
+    puts "The dice are: #{dice}"
     return dice
   end
 end
