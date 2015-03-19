@@ -25,19 +25,92 @@ $jeff_crisis_levels = {'critical' => {'text' => 'black',
                                           'bg' => "\n background-image: url(//brianauron.info/img/tux.gif);\nbackground-size: cover;"}}
 $jeff_crisis_level = 'critical'
 
+def cmds()
+ { '[A-Z]{3}' => { 'func' => :manatee_maybe, 'i' => false },
+   '^panicbutt(|,) enhance$' => { 'func' => :enhance, 'i' => true },
+   '^fuck (you|off)(|,) panicbutt$' => { 'func' => :fuck_off, 'i' => true },
+   '^panicbutt what is Jeff$' => { 'func' => :list_jeff, 'i' => true },
+   'cortana' => { 'func' => :cortana, 'i' => true },
+   '^panicbutt define windows error message (.*)$' => { 'func' => :windows_error, 'i' => true },
+   '^panicbutt sing [\w]+ happy birthday$' => { 'func' => :happy_birthday, 'i' => true },
+   '^panicbutt (-h|--help|help)$' => { 'func' => :panicbutt_help, 'i' => true },
+ }
+end
+
 def parse_message(msg)
-  if msg == msg.upcase && msg =~ /[A-Z]{3}/ && msg.length > 4
-    return manatee(), true
-  elsif msg =~ /^panicbutt(|,) enhance$/
-    return "/me types furiously. \"Enhance.\"", false
-  elsif msg =~ /^panicbutt what is Jeff$/i
-    return $jeff_crisis_level, true
-  elsif msg =~ /^fuck (you|off)(|,) panicbutt$/
-    return ":C", true
+  cmds.keys().each() do |k|
+    if cmds[k]['i']
+      reg = Regexp.new(k, Regexp::IGNORECASE)
+    else
+      reg = Regexp.new k
+    end
+    if msg =~ reg
+      return send(cmds[k]['func'], msg)
+    end
+  end
+  return nil, nil
+end
+
+def enhance(msg)
+  return "/me types furiously. \"Enhance.\"", false
+end
+
+def list_jeff(msg)
+  return $jeff_crisis_level, true
+end
+
+def fuck_off(msg)
+  return ":C", true
+end
+
+def cortana(msg)
+  return 'http://i0.kym-cdn.com/photos/images/original/000/837/637/7d6.gif', true
+end
+
+def windows_error(msg)
+  code = msg.scan(/message (.*)/)
+  roll = rand(1000)
+  if roll < 150
+    return 'Suggested course of action for code %s: install your choice of linux distro' % code[0][0] , true
+  elsif roll >= 150 && roll < 160
+    return 'Suggested course of action for code %s: Have you tried Dragonfly BSD?' % code[0][0], true
   else
-    return nil, nil
+    return 'Suggested course of action for code %s: turn it off and on again' % code[0][0] , true
   end
 end
+
+def happy_birthday(msg)
+  nick = msg.scan(/sing ([\w]+) happy/)
+  nick = nick[0][0]
+  return "Go #{nick}, it\'s your birthday! Go #{nick}, it\'s your birthday! You're one year older, one year wiser, you're a rock 'n roll star, king, czar and kaiser! You're the man of the hour, the VIP! You get the first slice -- of the P-I-E! So blow out your candles and make a wish! Put a smile on -- 'cuz it's your birthday, bitch! Go #{nick}, it's your birthday! Go #{nick}, it's your birthday!", false
+end
+
+def panicbutt_help(msg)
+  msg = "Panicbutt understands the following regexes:\n"
+  cmds.keys().each() do |k|
+    msg += "#{k}\n"
+  end
+  msg += "Panicbutt also understands more but BOBI was too lazy to put them in just now."
+  return msg, true
+end
+
+#  if msg == msg.upcase && msg =~ /[A-Z]{3}/ && msg.length > 4
+#    return manatee(), true
+#  elsif msg =~ /^panicbutt(|,) enhance$/
+#    return "/me types furiously. \"Enhance.\"", false
+#  elsif msg =~ /^panicbutt what is Jeff$/i
+#    return $jeff_crisis_level, true
+#  elsif msg =~ /^fuck (you|off)(|,) panicbutt$/
+#    return ":C", true
+#  elsif msg =~ /cortana/i
+#    return 'http://i0.kym-cdn.com/photos/images/original/000/837/637/7d6.gif', true
+#  elsif msg =~ /^ panicbutt define windows error message (.*)$/
+#    code = msg.scan(/message (.*)/)
+#    return 'Suggested course of action for code %s: turn it off and on again' % code[0][0] , true
+#  else
+#    return nil, nil
+#  end
+#end
 
 def edit_html(level)
   wordcolor = $jeff_crisis_levels[level]['text']
@@ -75,6 +148,12 @@ def set_crisis_level(level)
   end
   text = text + "\n#{link}"
   return text
+end
+
+def manatee_maybe(msg)
+  if msg == msg.upcase && msg.length > 4
+    return manatee(), true
+  end
 end
 
 def manatee()
