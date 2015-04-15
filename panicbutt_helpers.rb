@@ -50,6 +50,9 @@ def cmds()
    '^panicbutt tell (.+) to come to Portland$' => { 'func' => :come_to_portland,
                                                     'i' => true,
                                                     'help' => '"panicbutt tell <somebody> to come to Portland" panicbutt will summon the raw, animal magnetism of Hugh Jackman in an attempt to convince somebody to come to Portland. Shhh, just come.'},
+   '^panicbutt tell (.+) to come to Seattle$' => { 'func' => :come_to_seattle,
+                                                    'i' => true,
+                                                    'help' => '"panicbutt tell <somebody> to come to Seattle" panicbutt will display the beautiful scenery and emotion inherent in the Seattle climate in an attempt to convince somebody to come to Seattle.'},
    '^panicbutt roll dice($|.*)' => { 'func' => :roll_dice,
                                      'i' => true,
                                      'help' => '"panicbutt roll dice [number of 6 sided dice]" OR "panicbutt roll dice [set of dice, e.g. 2d8 3d12 1d20] [with <something> modifier +/-<number>]" Panicbutt will try to figure out what the fuck kind of dice you want to roll and roll them. Including the optional modifier string will adjust dice accordingly.'},
@@ -62,6 +65,9 @@ def cmds()
    '^panicbutt (.*) Jeff$' => { 'func' => :jeff_stuff,
                                 'i' => true,
                                 'help' => '"panicbutt <something> Jeff" Does stuff with Jeff\'s existential crisis levels. Options [list,enumerate,print] provide what settings are available for the crisis levels. Options [url,link] provide the web url to view the crisis level in action. Using any of the crisis levels from "list" sets the crisis level accordingly.'},
+   '^panicbutt(|,) what is love$' => { 'func' => :haddaway,
+                                'i' => true,
+                                'help' => '"panicbutt what is love" Panicbutt will spend a night at the Roxbury.'},
    '^panicbutt can bobi spend this money' => { 'func' => :can_bobi_spend,
                                                'i' => true,
                                                'help' => '"panicbutt can bobi spend this money" provides a webpage answering your question'},
@@ -133,6 +139,15 @@ def come_to_portland(msg, reg)
   end
 end
 
+def come_to_seattle(msg, reg)
+  who = msg.scan(reg)
+  if who[0][0] == 'me'
+    return "http://i.imgur.com/Lwo0CTF.gif", true
+  else
+     return who[0][0] + ": http://i.imgur.com/Lwo0CTF.gif", false
+  end
+end
+
 def roll_dice(msg, reg)
   n = msg.scan(reg)
   if n[0][0] == ''
@@ -157,6 +172,10 @@ end
 
 def can_bobi_spend(msg, reg)
   return "http://brianauron.info/CanBobiSpendThisMoney", true
+end
+
+def haddaway(msg, reg)
+  return "Baby don't hurt me! https://www.youtube.com/watch?v=Ktbhw0v186Q", true
 end
 
 def panicbutt_help(msg, reg)
