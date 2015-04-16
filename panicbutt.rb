@@ -30,11 +30,16 @@ bot = Cinch::Bot.new do
   end
 
   on :message, /.*/ do |m|
-    msg = m.message
-    replies = parse_message(msg)
+    text = m.message
+    who = m.user
+    replies = parse_message(text)
     replies.each() do |message, rep|
       if message
-        m.reply(message, rep)
+        if rep == nil
+          who.send message
+        else
+          m.reply(message, rep)
+        end
       end
     end
   end

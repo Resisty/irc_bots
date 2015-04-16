@@ -184,7 +184,7 @@ def panicbutt_help(msg, reg)
     cmd = cmds[k]['help']
     msg += "#{cmd}\n"
   end
-  return msg, true
+  return msg, nil
 end
 
 #  if msg == msg.upcase && msg =~ /[A-Z]{3}/ && msg.length > 4
