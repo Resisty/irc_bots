@@ -62,7 +62,7 @@ def cmds()
    '^panicbutt butts ([\w-]+) (.*)' => { 'func' => :butts_me,
                                          'i' => true,
                                          'help' => '"panicbutt butts <somebody> <something>" panicbutt will look up <something> (can contain spaces) on giphy for <somebody> (cannot contain spaces, can be "me")'},
-   '^panicbutt urbn ([\w-]+) (.*)' => { 'func' => :urban,
+   '^panicbutt urban ([\w-]+) (.*)' => { 'func' => :urban,
                                          'i' => true,
                                          'help' => '"panicbutt urban <somebody> <something>" panicbutt will look up <something> (can contain spaces) on Urban Dictionary for <somebody> (cannot contain spaces, can be "me")'},
    '^panicbutt (.*) Jeff$' => { 'func' => :jeff_stuff,
