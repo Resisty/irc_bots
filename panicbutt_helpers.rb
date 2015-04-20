@@ -62,6 +62,9 @@ def cmds()
    '^panicbutt butts ([\w-]+) (.*)' => { 'func' => :butts_me,
                                          'i' => true,
                                          'help' => '"panicbutt butts <somebody> <something>" panicbutt will look up <something> (can contain spaces) on giphy for <somebody> (cannot contain spaces, can be "me")'},
+   '^panicbutt urbn ([\w-]+) (.*)' => { 'func' => :urban,
+                                         'i' => true,
+                                         'help' => '"panicbutt urban <somebody> <something>" panicbutt will look up <something> (can contain spaces) on Urban Dictionary for <somebody> (cannot contain spaces, can be "me")'},
    '^panicbutt (.*) Jeff$' => { 'func' => :jeff_stuff,
                                 'i' => true,
                                 'help' => '"panicbutt <something> Jeff" Does stuff with Jeff\'s existential crisis levels. Options [list,enumerate,print] provide what settings are available for the crisis levels. Options [url,link] provide the web url to view the crisis level in action. Using any of the crisis levels from "list" sets the crisis level accordingly.'},
@@ -71,9 +74,9 @@ def cmds()
    '^panicbutt can bobi spend this money' => { 'func' => :can_bobi_spend,
                                                'i' => true,
                                                'help' => '"panicbutt can bobi spend this money" provides a webpage answering your question'},
-   '^panicbutt (-h|--help|help)$' => { 'func' => :panicbutt_help,
+   '^panicbutt (-h|--help|help|halp)$' => { 'func' => :panicbutt_help,
                                        'i' => true,
-                                       'help' => '"panicbutt -h, panicbutt --help, panicbutt help" print this list of helpful help messages.'},
+                                       'help' => '"panicbutt -h, panicbutt --help, panicbutt h[ae]lp" print this list of helpful help messages.'},
  }
 end
 
@@ -255,6 +258,27 @@ def manatee()
   return url
 end
 
+def urban(msg, reg)
+  terms = msg.scan(reg)
+  nick = terms[0][0]
+  if nick == 'me'
+    rep = true
+  else
+    rep = false
+  end
+  search = terms[0][1]
+  search = search.split(/ /).join('%20')
+  url = 'http://api.urbandictionary.com/v0/define?term=' + search
+  uri = URI(url)
+  resp = Net::HTTP::get_response(uri)
+  result = JSON.parse(resp.body)
+  if result['result_type'] == 'no_results'
+    return 'That word isn\'t defined, dummy!', rep
+  else
+    defn = result['list'][0]['definition'].split("\r\n\r\n")
+    return defn.join("\n"), rep
+  end
+end
 
 def butts_me(msg, reg)
   terms = msg.scan(reg)
