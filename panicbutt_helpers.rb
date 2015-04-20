@@ -74,6 +74,10 @@ def cmds()
    '^panicbutt can bobi spend this money' => { 'func' => :can_bobi_spend,
                                                'i' => true,
                                                'help' => '"panicbutt can bobi spend this money" provides a webpage answering your question'},
+    'fixit' => { 'func' => :fixit,
+                 'i' => true,
+                 'help' => 'Any mention of fixit will link you to the fixit video.'
+   },
    '^panicbutt (-h|--help|help|halp)$' => { 'func' => :panicbutt_help,
                                        'i' => true,
                                        'help' => '"panicbutt -h, panicbutt --help, panicbutt h[ae]lp" print this list of helpful help messages.'},
@@ -343,6 +347,9 @@ def dice_roll(dicestr)
   end
 end
 
+def fixit(msg, reg)
+  return 'https://www.youtube.com/watch?v=8ZCysBT5Kec', true
+end
 
 def spin_wheel(msg, reg)
   values = (5..100).step(5)
