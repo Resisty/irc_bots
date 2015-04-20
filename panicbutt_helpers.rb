@@ -38,11 +38,6 @@ def cmds()
    '^panicbutt what is Jeff$' => { 'func' => :list_jeff,
                                    'i' => true,
                                    'help' => '"panicbutt what is Jeff" will tell you Jeff\'s current existential crisis level. Defaults to critical'},
-   'fixit' => {
-     'func' => :fixit,
-     'i' => true,
-     'help' => 'Any mention of fixit will link you to the fixit video.'
-   },
    'cortana' => { 'func' => :cortana,
                   'i' => true,
                   'help' => 'Any mention of cortana will summon the AI who helped to save the galaxy.'},
@@ -115,9 +110,6 @@ end
 def fuck_off(msg, reg)
   return ":C", true
 end
-
-def fixit(msg, reg)
-  return 'https://www.youtube.com/watch?v=8ZCysBT5Kec', true
 
 def cortana(msg, reg)
   return 'http://i0.kym-cdn.com/photos/images/original/000/837/637/7d6.gif', true
