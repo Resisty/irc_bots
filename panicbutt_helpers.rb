@@ -114,7 +114,7 @@ def fuck_off(msg, reg)
 end
 
 def fixit(msg, reg):
-  return 'https://www.youtube.com/watch?v=8ZCysBT5Kec'
+  return 'https://www.youtube.com/watch?v=8ZCysBT5Kec', true
 
 def cortana(msg, reg)
   return 'http://i0.kym-cdn.com/photos/images/original/000/837/637/7d6.gif', true
