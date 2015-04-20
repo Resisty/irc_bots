@@ -113,7 +113,7 @@ def fuck_off(msg, reg)
   return ":C", true
 end
 
-def fixit(msg, reg):
+def fixit(msg, reg)
   return 'https://www.youtube.com/watch?v=8ZCysBT5Kec', true
 
 def cortana(msg, reg)
