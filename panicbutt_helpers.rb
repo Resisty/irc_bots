@@ -78,6 +78,10 @@ def cmds()
                  'i' => true,
                  'help' => 'Any mention of fixit will link you to the fixit video.'
    },
+    '^panicbutt(|,) how long until Jeff (graduates|becomes sane)$' => { 'func' => :til_sane,
+                 'i' => true,
+                 'help' => 'Asking panicbutt "how long until Jeff graduates" (or "becomes sane") will show the current status of the countdown.'
+   },
    '^panicbutt (-h|--help|help|halp)$' => { 'func' => :panicbutt_help,
                                        'i' => true,
                                        'help' => '"panicbutt -h, panicbutt --help, panicbutt h[ae]lp" print this list of helpful help messages.'},
@@ -350,6 +354,14 @@ end
 def fixit(msg, reg)
   return 'https://www.youtube.com/watch?v=8ZCysBT5Kec', true
 end
+
+def til_sane(msg, reg)
+  require 'date'
+  grad = Date.new(2016, 5, 31)
+  diff = grad - Date.today
+  return 'Assuming he sticks to the plan, Jeff becomes sane in %d days.' % diff.to_int, true
+end
+
 
 def spin_wheel(msg, reg)
   values = (5..100).step(5)
