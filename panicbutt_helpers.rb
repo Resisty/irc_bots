@@ -82,6 +82,12 @@ def cmds()
                  'i' => true,
                  'help' => 'Asking panicbutt "how long until Jeff graduates" (or "becomes sane") will show the current status of the countdown.'
    },
+   '^panicbutt snort ([\w-]+)' => { 'func' => :snort,
+                                    'i' => true,
+                                    'help' => 'panicbutt snort <nick> increment nick\'s snort counter for the day'},
+   '^panicbutt show snorts' => { 'func' => :snort,
+                                 'i' => true,
+                                 'help' => 'panicbutt show snorts list snorts for the day'},
    '^panicbutt (-h|--help|help|halp)$' => { 'func' => :panicbutt_help,
                                        'i' => true,
                                        'help' => '"panicbutt -h, panicbutt --help, panicbutt h[ae]lp" print this list of helpful help messages.'},
@@ -366,4 +372,23 @@ end
 def spin_wheel(msg, reg)
   values = (5..100).step(5)
   return values.to_a.sample, true
+end
+
+$snorts = Hash.new(0)
+$yesterday = Time.new.day
+
+def snort(nick)
+  day = Time.new.day
+  if day != $yesterday
+    $yesterday = day
+    $snorts = Hash.new(0)
+  end
+  $snorts[nick] += 1
+  return "#{nick} has #{snorts[nick]} snorts today"
+end
+
+def show_snorts(nick)
+  $snorts.to_a.map {|nick, count|
+    "#{nick}: #{count}"
+  }.join '\n'
 end
