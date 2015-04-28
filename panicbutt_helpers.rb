@@ -417,16 +417,20 @@ def snort(msg, reg)
     db = {'snorts' => {}}
     db['snorts'][nick] = {'day' => day, 'count' => 1}
   end
+  num_snorts = 1
+  if nick == 'parsk'
+    num_snorts = Random.new.rand(8..21)
+  end
   if db.has_key?('snorts')
     if db['snorts'].has_key?(nick)
       if day != db['snorts'][nick]['day']
         db['snorts'][nick]['day'] = day
-        db['snorts'][nick]['count'] = 1
+        db['snorts'][nick]['count'] = num_snorts
       else
-        db['snorts'][nick]['count'] += 1
+        db['snorts'][nick]['count'] += num_snorts
       end
     else
-      db['snorts'][nick] = {'day' => day, 'count' => 1}
+      db['snorts'][nick] = {'day' => day, 'count' => num_snorts}
     end
   else
     db['snorts'] = {}
