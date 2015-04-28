@@ -461,7 +461,7 @@ def show_snorts(msg, reg)
     return "Nobody has snorted!", true
   end
   if write_out
-    File.open('db.yml', 'w') {|f| f.write db.to_yaml } #Store
+    File.open('db.yaml', 'w') {|f| f.write db.to_yaml } #Store
   end
   return snort_list.join("\n"), true
 end
