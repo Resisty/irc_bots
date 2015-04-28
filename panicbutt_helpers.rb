@@ -88,6 +88,12 @@ def cmds()
    'whelps' => { 'func' => :whelps,
                                        'i' => true,
                                        'help' => 'Onyxia Wipes have been known to occur, given certain stimuli.'},
+   '^panicbutt snort ([\w-]+)' => { 'func' => :snort,
+                                    'i' => true,
+                                    'help' => 'panicbutt snort <nick> increment nick\'s snort counter for the day'},
+   '^panicbutt show snorts' => { 'func' => :show_snorts,
+                                 'i' => true,
+                                 'help' => 'panicbutt show snorts list snorts for the day'},
    '^panicbutt (-h|--help|help|halp)$' => { 'func' => :panicbutt_help,
                                        'i' => true,
                                        'help' => '"panicbutt -h, panicbutt --help, panicbutt h[ae]lp" print this list of helpful help messages.'},
@@ -397,4 +403,65 @@ end
 def spin_wheel(msg, reg)
   values = (5..100).step(5)
   return values.to_a.sample, true
+end
+
+def snort(msg, reg)
+  nick = msg.scan(reg)
+  puts nick
+  nick = nick[0][0]
+  puts nick
+  day = Time.new.strftime("%F")
+  begin
+    db = YAML.load_file('db.yaml')
+  rescue
+    db = {'snorts' => {}}
+    db['snorts'][nick] = {'day' => day, 'count' => 1}
+  end
+  if db.has_key?('snorts')
+    if db['snorts'].has_key?(nick)
+      if day != db['snorts'][nick]['day']
+        db['snorts'][nick]['day'] = day
+        db['snorts'][nick]['count'] = 1
+      else
+        db['snorts'][nick]['count'] += 1
+      end
+    else
+      db['snorts'][nick] = {'day' => day, 'count' => 1}
+    end
+  else
+    db['snorts'] = {}
+  end
+  File.open('db.yaml', 'w') {|f| f.write db.to_yaml } #Store
+  return "#{nick} has snorted #{db['snorts'][nick]['count']} snorts today", true
+end
+
+def show_snorts(msg, reg)
+  day = Time.new.strftime("%F")
+  write_out = false
+  begin
+    db = YAML.load_file('db.yaml')
+  rescue
+    db = {'snorts' => {}}
+    File.open('db.yaml', 'w') {|f| f.write db.to_yaml } #Store
+    return 'Nobody has snorted yet!', true
+  end
+  snort_list = []
+  if db.has_key?('snorts')
+    if db['snorts'].empty?
+      return "Nobody has snorted!", true
+    end
+    db['snorts'].each do |nick, val|
+      if day != db['snorts'][nick]['day']
+        db['snorts'][nick]['count'] = 0
+        write_out = true
+      end
+      snort_list.push("#{nick} has snorted #{db['snorts'][nick]['count']} snorts today")
+    end
+  else
+    return "Nobody has snorted!", true
+  end
+  if write_out
+    File.open('db.yml', 'w') {|f| f.write db.to_yaml } #Store
+  end
+  return snort_list.join("\n"), true
 end
