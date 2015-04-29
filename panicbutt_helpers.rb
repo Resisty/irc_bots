@@ -23,7 +23,16 @@ $jeff_crisis_levels = {'critical' => {'text' => 'black',
                       'linuxpocalypse' => {'text' => 'green',
                                           'font' => 'Impact',
                                           'bg' => "\n background-image: url(//brianauron.info/img/tux.gif);\nbackground-size: cover;"}}
-$jeff_crisis_level = 'critical'
+
+def get_current_level()
+  $fn = '/var/www/html/jeff-existential-crisis-level/jeff-existential-crisis-level.html'
+  text = File.read($fn)
+  match = text.scan(/("level">)(.*)(<\/h1>)/)
+  level = match[0][1]
+  return level
+end
+
+$jeff_crisis_level = get_current_level()
 
 def cmds()
  { '[A-Z]{3}' => { 'func' => :manatee_maybe,
