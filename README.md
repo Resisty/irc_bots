@@ -1,6 +1,8 @@
 # IRC Bots
 Various bots written in ruby using cinch.
-OR
+
+###OR
+
 Varions bots written in python using sockets.
 
 ##Requirements
