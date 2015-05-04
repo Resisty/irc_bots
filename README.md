@@ -3,7 +3,7 @@ Various bots written in ruby using cinch.
 
 ###OR
 
-Varions bots written in python using sockets.
+Various bots written in python using sockets.
 
 ##Requirements
 - cinch==2.2.4
