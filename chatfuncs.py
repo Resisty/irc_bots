@@ -31,7 +31,7 @@ import json
 def manatee_maybe(data, match):
     if data['msg'] == data['msg'].upper() and len(data['msg']) > 4:
         manatee = random.randint(1, 33)
-        data['msg'] = ['http://calmingmanatee.com/img/managee{0}.jpg'.format(manatee)]
+        data['msg'] = ['http://calmingmanatee.com/img/manatee{0}.jpg'.format(manatee)]
     else:
         data['msg'] = []
     data['reply'] = 'public'
@@ -39,7 +39,7 @@ def manatee_maybe(data, match):
 
 def enhance(data, match):
     data['msg'] = ['/me types furiously. "Enhance."']
-    data['reply'] = 'public'
+    data['reply'] = 'emote'
     return data
 
 def fuck_off(data, match):

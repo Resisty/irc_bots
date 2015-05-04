@@ -7,7 +7,7 @@
 #
 #  Creation Date : 30-04-2015
 #
-#  Last Modified : Sun 03 May 2015 08:30:29 PM CDT
+#  Last Modified : Mon 04 May 2015 01:35:31 PM CDT
 #
 #  Created By : Brian Auron
 #
@@ -18,7 +18,10 @@ import copy
 import mapping
 
 class IRC():
-    def __init__(self, server, port, nick, user, channel, byte = 4096):
+    def __init__(self, server,
+                 port, nick,
+                 user, channel,
+                 byte = 4096, rejoin = False):
         self.server = server
         self.port = port
         self.nick = nick
@@ -30,8 +33,17 @@ class IRC():
                      'reply': 'public', 'nicks': self.getnicks}
         self.irc = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.irc.connect(( self.server, self.port ))
+        self.setnick()
+        self.setuser()
+        self.join()
+
+    def setnick(self):
         self.irc.send('NICK {0}\r\n'.format(self.nick))
+
+    def setuser(self):
         self.irc.send('USER {0} {0} {0} :Python IRC\r\n'.format(self.user))
+
+    def join(self):
         self.irc.send('JOIN {0}\r\n'.format(self.channel))
 
     def manhandle_data(self):
@@ -64,13 +76,15 @@ class IRC():
                 # reply is a dictionary like self.data's initialization, but
                 # with actual data
                 for msg in reply['msg']:
-                    print 'msg in reply[\'msg\']: "{0}" SHOULD EQUAL retval above'.format(msg)
                     if reply['reply'] == 'public':
                         retstr = 'PRIVMSG {0} :{1}: {2}\r\n'.format(reply['channel'],  reply['nick'], msg)
                         self.irc.send(retstr)
                     elif reply['reply'] == 'private':
                         retstr = 'PRIVMSG {0} : {1}\r\n'.format(reply['nick'], msg)
                         self.irc.send(retstr)
+                    elif reply['reply'] == 'emote':
+                        print 'Emoting.'
+                        retstr = 'PRIVMSG {0} :{1}\r\n'.format(reply['channel'], msg)
             return
         return
 
@@ -131,7 +145,15 @@ class IRC():
         try:
             user, msgtype, channel = parts[1].strip().split()
         except ValueError as e:
-            # system messages at startup, ignore them
+            # handle kicks if we want
+            try:
+                user, msgtype, channel, me = parts[1].strip().split()
+                if msgtype == 'KICK' and self.rejoin:
+                    self.join()
+            except ValueError as e:
+                pass
+
+            # otherwise, probably system messages at startup, ignore them
             self.replace_data()
             return
         if msgtype != 'PRIVMSG':

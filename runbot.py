@@ -7,7 +7,7 @@
 #
 #  Creation Date : 30-04-2015
 #
-#  Last Modified : Sun 03 May 2015 02:54:56 PM CDT
+#  Last Modified : Mon 04 May 2015 01:26:46 PM CDT
 #
 #  Created By : Brian Auron
 #
@@ -34,6 +34,10 @@ def main():
     kwargs['port'] = yml['port']
     kwargs['user'] = yml['user']
     kwargs['channel'] = yml['channel']
+    try:
+        kwargs['rejoin'] = yml['rejoin']
+    except KeyError as e:
+        kwargs['rejoin'] = False
     bot = irc.IRC(**kwargs)
     bot.run()
 
