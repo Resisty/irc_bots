@@ -19,9 +19,9 @@ Since this can be a giant pain in the dick:
 
 - Install requirements above
 - `sudo -u postgres psql`
-- CREATE ROLE <the username> WITH LOGIN PASSWORD '<the password>' CREATEDB;
-- CREATE DATABASE <some dbname> OWNER <the username>;
-- \c <some dbname>
+- CREATE ROLE \<the username\> WITH LOGIN PASSWORD '\<the password\>' CREATEDB;
+- CREATE DATABASE \<some dbname\> OWNER \<the username\>;
+- \c \<some dbname\>
 - CREATE EXTENSION hstore;
 - quit postgres
 - `useradd <the username>`
@@ -29,7 +29,7 @@ Since this can be a giant pain in the dick:
  - Change `peer` to `md5`
  - `sudo service postgresql restart`
 - `sudo -u <the username> psql`
- - Enter <the password>
+ - Enter \<the password\>
 
 If this doesn't work: let Brian know he fucked up the instructions.
 
