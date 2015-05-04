@@ -108,12 +108,6 @@ mapping =  {  '^panicbutt ([\s\w\']+) Jeff($| becomes sane)':
                     'help': 'Any mention of fixit will link you to the fixit video.'
    },
 
-              '^panicbutt(|,) how long until Jeff (graduates|becomes sane)$':
-                  { 'func': jeff.til_sane,
-                    'i': True,
-                    'help': 'Asking panicbutt "how long until Jeff graduates" (or "becomes sane") will show the current status of the countdown.'
-   },
-
               '(coffee|good sludge|fresh pot!)':
                   { 'func': chatfuncs.good_sludge,
                     'i': True,
