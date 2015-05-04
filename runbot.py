@@ -7,14 +7,14 @@
 #
 #  Creation Date : 30-04-2015
 #
-#  Last Modified : Thu 30 Apr 2015 11:15:08 PM CDT
+#  Last Modified : Sun 03 May 2015 02:54:56 PM CDT
 #
 #  Created By : Brian Auron
 #
 # ========================================
 import sys
 import yaml
-import testirc
+import irc
 
 def main():
     try:
@@ -33,8 +33,8 @@ def main():
     kwargs['server'] = yml['server']
     kwargs['port'] = yml['port']
     kwargs['user'] = yml['user']
-    kwargs['channels'] = [channel for channel in yml['channels']]
-    bot = testirc.IRC(**kwargs)
+    kwargs['channel'] = yml['channel']
+    bot = irc.IRC(**kwargs)
     bot.run()
 
 if __name__ == '__main__':
