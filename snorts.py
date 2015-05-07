@@ -79,7 +79,7 @@ def snort_me(data, match):
     who = match.groups()[0]
     if who == 'me':
         who = data['nick']
-    nicks = data['nicks']()
+    nicks = data['nicks']()  # wow this is hack-y
     if who not in nicks:
         data['msg'] = ['Cannot snort {0} a snort, nick not in channel.'.format(who)]
     else:

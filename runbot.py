@@ -39,7 +39,8 @@ def main():
     except KeyError as e:
         kwargs['rejoin'] = False
     bot = irc.IRC(**kwargs)
-    bot.run()
+    bot.connect()
+    bot.run(blocking=True)
 
 if __name__ == '__main__':
     main()

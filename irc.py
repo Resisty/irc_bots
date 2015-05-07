@@ -17,37 +17,44 @@ import re
 import copy
 import mapping
 
-class IRC():
-    def __init__(self, server,
-                 port, nick,
-                 user, channel,
-                 byte = 4096, rejoin = False):
-        self.server = server
-        self.port = port
+RECV_BYTES = 2 ** 12
+
+class IRC(object):
+    def __init__(self, server, port, nick, user, channel, rejoin=False):
         self.nick = nick
         self.user = user
         self.channel = channel
-        self.byte = byte
         self.data = {'nick': self.nick, 'msg': '',
                      'type': None, 'channel': self.channel,
                      'reply': 'public', 'nicks': self.getnicks}
-        self.irc = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        self.irc.connect(( self.server, self.port ))
+        self.host = server, port
+
+    def connect(self):
+        self._socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        self._socket.connect(self.host)
         self.setnick()
         self.setuser()
         self.join()
 
+    def send_command(self, command, *args, **kwargs):
+        data = kwargs.pop(data)  # python2 kludge
+        args = [command] + list(args)
+        if data:
+            args.append(':' + data)
+        self._socket.send(' '.join(args) + '\r\n')
+
     def setnick(self):
-        self.irc.send('NICK {0}\r\n'.format(self.nick))
+        self.send_command('NICK', self.nick)
 
     def setuser(self):
-        self.irc.send('USER {0} {0} {0} :Python IRC\r\n'.format(self.user))
+        self.send_command(
+                'USER', self.user, self.user, self.user, data='Python IRC')
 
     def join(self):
-        self.irc.send('JOIN {0}\r\n'.format(self.channel))
+        self.send_command('JOIN', self.channel)
 
     def manhandle_data(self):
-        self.data['msg'] = self.irc.recv(self.byte)
+        self.data['msg'] = self._socket.recv(RECV_BYTES)
         print 'Got data: "{0}"'.format(self.data['msg'])
         # Do way more clever shit here, like (re)import msg_funcs or something
         self.classify()
@@ -55,7 +62,7 @@ class IRC():
         if self.data['type'] is None:
             return
         if self.data['type'] == 'PING':
-            self.irc.send(self.data['msg'])
+            self._socket.send(self.data['msg'])
             return
         if self.data['type'] == 'PRIVMSG' and self.data['channel'] == self.nick:
             # private msg outside of channel
@@ -64,27 +71,22 @@ class IRC():
                 # reply is a dictionary like self.data's initialization, but
                 # with actual data
                 for msg in reply['msg']:
-                    retstr = 'PRIVMSG {0} :{1}\r\n'.format(reply['nick'], msg)
-                    self.irc.send(retstr)
+                    self.send_command('PRIVMSG', reply['nick'], data=msg)
             return
         if self.data['type'] == 'PRIVMSG':
             # do nothing until we have fun stuff to do
-            #retstr = 'PRIVMSG {0} :{1}\r\n'.format(data['channel'], FUNSTUFF_HERE)
-            #self.irc.send(retstr)
             self.get_replies()
             for reply in self.data['msg']:
                 # reply is a dictionary like self.data's initialization, but
                 # with actual data
                 for msg in reply['msg']:
                     if reply['reply'] == 'public':
-                        retstr = 'PRIVMSG {0} :{1}: {2}\r\n'.format(reply['channel'],  reply['nick'], msg)
-                        self.irc.send(retstr)
+                        self.send_command('PRIVMSG', reply['channel'],
+                                data=':{}: {}'.format(reply['nick'], msg))
                     elif reply['reply'] == 'private':
-                        retstr = 'PRIVMSG {0} : {1}\r\n'.format(reply['nick'], msg)
-                        self.irc.send(retstr)
+                        self.send_command('PRIVMSG', reply['nick'], data=msg)
                     elif reply['reply'] == 'emote':
-                        print 'Emoting.'
-                        retstr = 'PRIVMSG {0} :{1}\r\n'.format(reply['channel'], msg)
+                        self.send_command('PRIVMSG', reply['channel'], data=msg)
             return
         return
 
@@ -109,28 +111,24 @@ class IRC():
                 tmp.append(stuff['func'](copy.deepcopy(self.data), match))
         self.data['msg'] = tmp
 
-    def run(self):
-        while True:
+    def run(self, blocking=True):
+        while blocking:
             self.manhandle_data()
 
     def getnicks(self):
-        msg = 'NAMES {0}\r\n'.format(self.channel)
-        self.irc.send(msg)
-        self.data = self.irc.recv(self.byte)
+        self.send_command('NAMES', self.channel)
+        self.data = self._socket.recv(RECV_BYTES)
         self.data = self.data.split('\r\n')
-        nicklist = []
         for line in self.data:
-            if line == '':
+            if not line:
                 continue
             # nicks come after a colon after a space after the channel name
-            nicks = line.split(self.channel)[1].strip()[1:].split()
-            # strip out op and voice modes
-            nicks = [re.sub('[@\+]', '', nick) for nick in nicks]
-            nicklist += [nick for nick in nicks]
+            nicks = line.split(self.channel, 1)[1].strip(': ')
+            for nick in nicks.split():
+                # strip out op and voice modes
+                yield nick.lstrip('@+')
 
-        return nicklist
-
-    def replace_data(self, nick = '', msg = '', typ = '', channel = ''):
+    def replace_data(self, nick='', msg='', typ='', channel=''):
         self.data['nick'] = nick
         self.data['msg']= msg
         self.data['type'] = typ
