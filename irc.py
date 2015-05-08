@@ -7,7 +7,7 @@
 #
 #  Creation Date : 30-04-2015
 #
-#  Last Modified : Fri 08 May 2015 11:17:19 AM CDT
+#  Last Modified : Fri 08 May 2015 01:07:57 PM CDT
 #
 #  Created By : Brian Auron
 #
@@ -56,6 +56,12 @@ class IRC(object):
     def join(self):
         self.send_command('JOIN', self.channel)
 
+    def chunk_message(self, line):
+        n = 400 # Assuming 510 character messages plus channel, nick, and
+                # punctuation, this should fit easily.
+        return [line[i:i+n] for i in range(0, len(line), n)] 
+
+
     def manhandle_data(self):
         self.data['msg'] = self._socket.recv(RECV_BYTES)
         print 'Got data: "{0}"'.format(self.data['msg'])
@@ -74,7 +80,8 @@ class IRC(object):
                 # reply is a dictionary like self.data's initialization, but
                 # with actual data
                 for msg in reply['msg']:
-                    self.send_command('PRIVMSG', reply['nick'], data = msg)
+                    for line in self.chunk_message(msg):
+                        self.send_command('PRIVMSG', reply['nick'], data = line)
             return
         if self.data['type'] == 'PRIVMSG':
             # do nothing until we have fun stuff to do
@@ -83,13 +90,14 @@ class IRC(object):
                 # reply is a dictionary like self.data's initialization, but
                 # with actual data
                 for msg in reply['msg']:
-                    if reply['reply'] == 'public':
-                        self.send_command('PRIVMSG', reply['channel'],
-                                data = ':{}: {}'.format(reply['nick'], msg))
-                    elif reply['reply'] == 'private':
-                        self.send_command('PRIVMSG', reply['nick'], data = msg)
-                    elif reply['reply'] == 'emote':
-                        self.send_command('PRIVMSG', reply['channel'], data = msg)
+                    for line in self.chunk_message(msg):
+                        if reply['reply'] == 'public':
+                            self.send_command('PRIVMSG', reply['channel'],
+                                              data = ':{}: {}'.format(reply['nick'], line))
+                        elif reply['reply'] == 'private':
+                            self.send_command('PRIVMSG', reply['nick'], data = line)
+                        elif reply['reply'] == 'emote':
+                            self.send_command('PRIVMSG', reply['channel'], data = line)
             return
         return
 

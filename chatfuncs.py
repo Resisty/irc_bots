@@ -155,7 +155,7 @@ def urban(data, match):
         try:
             data['msg'] = jdata['list'][which]['definition'].split('\r\n')
         except IndexError as e:
-            data['msg'] = 'No such definition number!'
+            data['msg'] = ['No such definition number!']
     data['reply'] = 'public'
     return data
 
