@@ -7,7 +7,7 @@
 #
 #  Creation Date : 03-05-2015
 #
-#  Last Modified : Fri 08 May 2015 12:24:47 PM CDT
+#  Last Modified : Fri 08 May 2015 01:35:09 PM CDT
 #
 #  Created By : Brian Auron
 #
@@ -118,9 +118,9 @@ def count_update(data, match):
 
 @connect
 def count_get(data, match):
-    key = match.group(0)
+    key = match.groups()[0]
     try:
-        data['msg'] = [str(Counts.get(Counts.key == key))]
+        data['msg'] = [str(Counts.get(Counts.key == key).count)]
     except peewee.DoesNotExist:
         data['msg'] = ['None']
     data['reply'] = 'public'
