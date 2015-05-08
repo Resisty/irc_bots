@@ -201,3 +201,8 @@ def whelps(data, match):
                    'MANY WHELPS','NOW','HANDLE IT!']
     data['reply'] = 'public'
     return data
+
+def this_is_fine(data, match):
+    data['msg'] = ['http://gunshowcomic.com/648']
+    data['reply'] = 'public'
+    return data

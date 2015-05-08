@@ -132,5 +132,9 @@ mapping =  {  '^panicbutt ([\s\w\']+) Jeff($| becomes sane)':
                   { 'func': panicbutt_help,
                     'i': True,
                     'help': '"panicbutt -h, panicbutt --help, panicbutt h[ae]lp" print this list of helpful help messages.'},
+              'this is fine':
+                  { 'func': chatfuncs.this_is_fine,
+                    'i': True,
+                    'help': 'Asserting that anything is fine will force panicbutt to demonstrate that everything is not necessarily fine.'},
            }
 
