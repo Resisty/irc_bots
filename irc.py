@@ -7,7 +7,7 @@
 #
 #  Creation Date : 30-04-2015
 #
-#  Last Modified : Fri 08 May 2015 11:00:33 AM CDT
+#  Last Modified : Fri 08 May 2015 11:17:19 AM CDT
 #
 #  Created By : Brian Auron
 #
@@ -111,6 +111,7 @@ class IRC(object):
             case = re.IGNORECASE if stuff['i'] else 0
             match = re.search(regex, self.data['msg'], case)
             if match:
+                print stuff['func']
                 tmp.append(stuff['func'](copy.deepcopy(self.data), match))
         self.data['msg'] = tmp
 

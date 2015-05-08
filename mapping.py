@@ -140,11 +140,11 @@ mapping =  {  '^panicbutt ([\s\w\']+) Jeff($| becomes sane)':
 
               '^panicbutt (\w+)(\+\+|--)$':
                   { 'func': snorts.count_update,
-                   'i': True,
-                   'help': '"<variable>++, <variable>--" increment or decrement the variable'},
+                    'i': True,
+                    'help': '"<variable>++, <variable>--" increment or decrement the variable'},
 
               '^panicbutt:? print (\w+)$':
                   { 'func': snorts.count_get,
-                   'i': True,
-                   'help': '"panicbutt print <variable>" print the variable'},
+                    'i': True,
+                    'help': '"panicbutt print <variable>" print the variable'},
 }

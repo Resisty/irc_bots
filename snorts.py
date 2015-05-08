@@ -7,7 +7,7 @@
 #
 #  Creation Date : 03-05-2015
 #
-#  Last Modified : Thu 07 May 2015 11:25:27 PM CDT
+#  Last Modified : Fri 08 May 2015 12:24:47 PM CDT
 #
 #  Created By : Brian Auron
 #
@@ -52,7 +52,7 @@ def connect(func):
       return func(*args, **kwargs)
     finally:
       psql_db.close()
-
+  return wrapper
 
 @connect
 def create_tables():
@@ -102,21 +102,26 @@ def show_snorts(data, match):
 
 @connect
 def count_update(data, match):
-  key, delta = match.groups()
-  delta = {'++': 1, '--': -1}[delta]
-  with psql_db.atomic():
-    try:
-      count = Count.create(key = key, count = 0)
-    except peewee.IntegrityError:
-      count = Count.get(Count.key == key)
-    count.count += delta
-    count.save()
-    return '{} is now {}'.format(key, count.count)
+    key, delta = match.groups()
+    delta = {'++': 1, '--': -1}[delta]
+    with psql_db.atomic():
+        try:
+            count = Counts.create(key = key, count = 0)
+        except peewee.IntegrityError:
+            psql_db.connect() # not entirely sure why this is necessary but it is
+            count = Counts.get(Counts.key == key)
+        count.count += delta
+        count.save()
+    data['msg'] =  ['{} is now {}'.format(key, count.count)]
+    data['reply'] = 'public'
+    return data
 
 @connect
 def count_get(data, match):
-  key = match.group(0)
-  try:
-    return str(Count.get(Count.key == key))
-  except peewee.DoesNotExist:
-    return 'None'
+    key = match.group(0)
+    try:
+        data['msg'] = [str(Counts.get(Counts.key == key))]
+    except peewee.DoesNotExist:
+        data['msg'] = ['None']
+    data['reply'] = 'public'
+    return data
