@@ -133,7 +133,7 @@ mapping =  {  '^panicbutt ([\s\w\']+) Jeff($| becomes sane)':
                     'i': True,
                     'help': '"panicbutt -h, panicbutt --help, panicbutt h[ae]lp" print this list of helpful help messages.'},
 
-              '^(\w+)(\+\+|--)$':
+              '^panicbutt (\w+)(\+\+|--)$':
                   { 'func': snorts.count_update,
                    'i': True,
                    'help': '"<variable>++, <variable>--" increment or decrement the variable'},

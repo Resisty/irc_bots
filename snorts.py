@@ -7,7 +7,7 @@
 #
 #  Creation Date : 03-05-2015
 #
-#  Last Modified : Sun 03 May 2015 08:14:25 PM CDT
+#  Last Modified : Thu 07 May 2015 11:25:27 PM CDT
 #
 #  Created By : Brian Auron
 #
@@ -55,13 +55,13 @@ def connect(func):
 
 
 @connect
-def create_snorts():
-    psql_db.create_tables([Snorts])
+def create_tables():
+    psql_db.create_tables([Snorts, Counts])
 
 @connect
-def drop_snorts():
+def drop_tables():
     psql_db.connect()
-    psql_db.drop_tables([Snorts])
+    psql_db.drop_tables([Snorts, Counts])
 
 @connect
 def do_snort(nick):
@@ -106,9 +106,9 @@ def count_update(data, match):
   delta = {'++': 1, '--': -1}[delta]
   with psql_db.atomic():
     try:
-      count = Count.create(key=key, count=0)
+      count = Count.create(key = key, count = 0)
     except peewee.IntegrityError:
-      count = Count.get(Count.key=key)
+      count = Count.get(Count.key == key)
     count.count += delta
     count.save()
     return '{} is now {}'.format(key, count.count)
@@ -117,6 +117,6 @@ def count_update(data, match):
 def count_get(data, match):
   key = match.group(0)
   try:
-    return str(Count.get(Count.key=key))
+    return str(Count.get(Count.key == key))
   except peewee.DoesNotExist:
     return 'None'

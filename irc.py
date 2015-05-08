@@ -7,7 +7,7 @@
 #
 #  Creation Date : 30-04-2015
 #
-#  Last Modified : Mon 04 May 2015 01:35:31 PM CDT
+#  Last Modified : Thu 07 May 2015 11:30:45 PM CDT
 #
 #  Created By : Brian Auron
 #
@@ -37,7 +37,10 @@ class IRC(object):
         self.join()
 
     def send_command(self, command, *args, **kwargs):
-        data = kwargs.pop(data)  # python2 kludge
+        try:
+            data = kwargs.pop('data')  # python2 kludge
+        except KeyError:
+            data = None
         args = [command] + list(args)
         if data:
             args.append(':' + data)
@@ -47,8 +50,7 @@ class IRC(object):
         self.send_command('NICK', self.nick)
 
     def setuser(self):
-        self.send_command(
-                'USER', self.user, self.user, self.user, data='Python IRC')
+        self.send_command('USER', self.user, self.user, self.user, data = 'Python IRC')
 
     def join(self):
         self.send_command('JOIN', self.channel)
@@ -71,7 +73,7 @@ class IRC(object):
                 # reply is a dictionary like self.data's initialization, but
                 # with actual data
                 for msg in reply['msg']:
-                    self.send_command('PRIVMSG', reply['nick'], data=msg)
+                    self.send_command('PRIVMSG', reply['nick'], data = msg)
             return
         if self.data['type'] == 'PRIVMSG':
             # do nothing until we have fun stuff to do
@@ -82,11 +84,11 @@ class IRC(object):
                 for msg in reply['msg']:
                     if reply['reply'] == 'public':
                         self.send_command('PRIVMSG', reply['channel'],
-                                data=':{}: {}'.format(reply['nick'], msg))
+                                data = ':{}: {}'.format(reply['nick'], msg))
                     elif reply['reply'] == 'private':
-                        self.send_command('PRIVMSG', reply['nick'], data=msg)
+                        self.send_command('PRIVMSG', reply['nick'], data = msg)
                     elif reply['reply'] == 'emote':
-                        self.send_command('PRIVMSG', reply['channel'], data=msg)
+                        self.send_command('PRIVMSG', reply['channel'], data = msg)
             return
         return
 
