@@ -7,7 +7,7 @@
 #
 #  Creation Date : 01-05-2015
 #
-#  Last Modified : Thu 07 May 2015 01:51:57 PM CDT
+#  Last Modified : Thu 07 May 2015 11:51:54 PM CDT
 #
 #  Created By : Brian Auron
 #
@@ -124,7 +124,7 @@ def set_crisis_level(nick, level):
     link = "http://brianauron.info/jeff-existential-crisis-level/"
     if level in jeff_crisis_levels.keys() and get_current_level() != level:
         psql_db.connect()
-        JeffCrisis.create(nick = nick, data = datetime.now(), level = level)
+        JeffCrisis.create(nick = nick, datetime = datetime.now(), level = level)
         edit_html(level)
         text = "Jeff's existential crisis level has been set to " + level
     elif get_current_level() == level:
