@@ -7,7 +7,7 @@
 #
 #  Creation Date : 30-04-2015
 #
-#  Last Modified : Mon 04 May 2015 01:35:31 PM CDT
+#  Last Modified : Thu 07 May 2015 11:43:09 PM CDT
 #
 #  Created By : Brian Auron
 #
@@ -16,6 +16,7 @@ import socket
 import re
 import copy
 import mapping
+import sys
 
 class IRC():
     def __init__(self, server,
@@ -144,6 +145,10 @@ class IRC():
             return
         try:
             user, msgtype, channel = parts[1].strip().split()
+        except IndexError as e:
+            # probably got a QUIT and now we have empty data
+            print 'Quitting for now, do clever stuff later.'
+            sys.exit(1)
         except ValueError as e:
             # handle kicks if we want
             try:

@@ -7,7 +7,7 @@
 #
 #  Creation Date : 01-05-2015
 #
-#  Last Modified : Sun 03 May 2015 09:03:50 PM CDT
+#  Last Modified : Thu 07 May 2015 01:51:57 PM CDT
 #
 #  Created By : Brian Auron
 #
@@ -15,6 +15,33 @@
 import datetime
 import bs4
 import re
+import peewee
+import yaml
+from playhouse.postgres_ext import PostgresqlExtDatabase
+from datetime import date, datetime, timedelta
+
+with open('panicbutt2.yaml', 'r') as fptr:
+    cfg = yaml.load(fptr.read())
+dbuser = cfg['dbuser']
+dbpass = cfg['dbpass']
+db = cfg['db']
+psql_db = PostgresqlExtDatabase(db, user = dbuser, password = dbpass)
+
+class JeffCrisis(peewee.Model):
+    nick = peewee.CharField()
+    datetime = peewee.DateTimeField()
+    level = peewee.CharField()
+
+    class Meta:
+        database = psql_db
+
+def create_crisis():
+    psql_db.connect()
+    psql_db.create_tables([JeffCrisis])
+
+def drop_crisis():
+    psql_db.connect()
+    psql_db.create_tables([JeffCrisis])
 
 jeff_crisis_levels = {'critical' : {'text' : 'black',
                                     'font' : 'Lucida Console',
@@ -92,10 +119,12 @@ def edit_html(level):
     except IOError as e:
         return 'Could not write file. Check permissions and try again.'
 
-def set_crisis_level(level):
+def set_crisis_level(nick, level):
     level = level.lower()
     link = "http://brianauron.info/jeff-existential-crisis-level/"
     if level in jeff_crisis_levels.keys() and get_current_level() != level:
+        psql_db.connect()
+        JeffCrisis.create(nick = nick, data = datetime.now(), level = level)
         edit_html(level)
         text = "Jeff's existential crisis level has been set to " + level
     elif get_current_level() == level:
@@ -116,7 +145,7 @@ def jeff_info(data, match):
     verb = match.groups()[0]
     print verb
     if verb in jeff_crisis_levels.keys():
-        data['msg'] = [set_crisis_level(verb)]
+        data['msg'] = [set_crisis_level(data['nick'], verb)]
     elif verb in ['list', 'enumerate', 'print']:
         data['msg'] = [', '.join(jeff_crisis_levels.keys())]
     elif verb in ['link', 'url']:

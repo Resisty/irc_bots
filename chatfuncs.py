@@ -160,7 +160,7 @@ def urban(data, match):
     return data
 
 def haddaway(data, match):
-    data['msg'] = 'Baby don\'t hurt me!  https://www.youtube.com/watch?v=Ktbhw0v186Q'
+    data['msg'] = ['Baby don\'t hurt me!  https://www.youtube.com/watch?v=Ktbhw0v186Q']
     data['reply'] = 'public'
     return data
 
