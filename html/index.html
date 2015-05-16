@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+    <meta charset="utf-8"/>
+    <meta content="IE=edge" http-equiv="X-UA-Compatible"/>
+    <meta content="width=device-width, initial-scale=1" name="viewport"/>
+    <title>What Is Jeff's Existential Crisis Level? - brianauron.info</title>
+    <link href="http://netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css" rel="stylesheet"/>
+    <link href="style.css" rel="stylesheet"/>
+    <style>
+	body {
+ background-image: url(//brianauron.info/img/expressive_cat.png);
+background-size: cover;}
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div class="row">
+        <div class="hidden-xs hidden-print" id="links">
+            <ul>
+                <li><a href="//brianauron.info"><span class="glyphicon glyphicon-home"></span> Home</a></li>
+                <li><a href="https://github.com/Resisty/irc_bots"><span class="glyphicon glyphicon-share"></span>Homemade IRC Bots</a></li>
+            </ul>
+        </div>
+      </div>
+      <div class="row" id="NO">
+	  <h1 id="jeff" class="text-center" style="font-weight: bold; font-size: 120pt; font-family: Arial, sans-serif; text-decoration: none; color: white;" title="level">CAT</h1>
+      </div>
+    </div>
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
+    <script src="http://netdna.bootstrapcdn.com/bootstrap/3.1.1/js/bootstrap.min.js"></script>
+    <script>
+      $(document).ready(function() {
+	  $.getJSON('//brianauron.info/flaskjeff', function(data) {
+	      var level = data['level']
+	      var bg = data['bg']
+	      var text = data['text']
+	      var font = data['font']
+	      $('head').append('<style>body{background-image: url(//brianauron.info/img/' + bg + ');background-size: cover;}</style>');
+	      $('#jeff').css({
+	          'font-weight': 'bold',
+		  'font-size': '120pt',
+		  'font-family': font + ', sans-serif',
+		  'color': text});
+	      $('#jeff').text(level);
+	  });
+      });
+    </script>
+</body></html>

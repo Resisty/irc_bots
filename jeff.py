@@ -7,7 +7,7 @@
 #
 #  Creation Date : 01-05-2015
 #
-#  Last Modified : Thu 07 May 2015 11:51:54 PM CDT
+#  Last Modified : Fri 15 May 2015 08:39:49 PM CDT
 #
 #  Created By : Brian Auron
 #
@@ -16,11 +16,14 @@ import datetime
 import bs4
 import re
 import peewee
+import os
 import yaml
 from playhouse.postgres_ext import PostgresqlExtDatabase
 from datetime import date, datetime, timedelta
 
-with open('panicbutt2.yaml', 'r') as fptr:
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+yaml_loc = os.path.join(BASE_DIR, 'panicbutt2.yaml')
+with open(yaml_loc, 'r') as fptr:
     cfg = yaml.load(fptr.read())
 dbuser = cfg['dbuser']
 dbpass = cfg['dbpass']
@@ -76,56 +79,12 @@ def get_current_level():
     level = soup.find('h1').string.lower()
     return level
 
-def edit_html(level):
-    color = jeff_crisis_levels[level]['text']
-    bgimg = jeff_crisis_levels[level]['bg']
-    font = jeff_crisis_levels[level]['font']
-    htmlfile = '/var/www/html/jeff-existential-crisis-level/index.html'
-    try:
-        with open(htmlfile, 'r') as fptr:
-            html = fptr.read()
-    except IOError as e:
-        return 'Could not read file. Check permissions and try again.'
-    soup = bs4.BeautifulSoup(html)
-    style = soup.find('style')
-    ustr = unicode(style.string)
-    subber = r'\1{0}\3'.format(bgimg)
-    nustr = re.sub('(img\/)(.*)(\))', subber, ustr)
-    style.string = nustr
-    try:
-        with open(htmlfile, 'w') as fptr:
-            fptr.write(str(soup))
-    except IOError as e:
-        return 'Could not write file. Check permissions and try again.'
-
-    htmlfile = '/var/www/html/jeff-existential-crisis-level/jeff-existential-crisis-level.html'
-    try:
-        with open(htmlfile, 'r') as fptr:
-            html = fptr.read()
-    except IOError as e:
-        return 'Could not read file. Check permissions and try again.'
-    soup = bs4.BeautifulSoup(html)
-    h1 = soup.find('h1')
-    h1.attrs = {u'style': u'font-weight: bold; font-size: 120pt; font-family: Arial, sans-serif; text-decoration: none; color: white;',
-                u'class': [u'text-center'],
-                u'title': u'level'}
-    style = re.sub('(font-family: )([\w\s]+)', r'\1{0}'.format(font), h1.attrs['style'])
-    style = re.sub('(color: )(\w+)', r'\1{0}'.format(color), style)
-    h1.attrs['style'] = style
-    h1.string = level.upper()
-    try:
-        with open(htmlfile, 'w') as fptr:
-            fptr.write(str(soup))
-    except IOError as e:
-        return 'Could not write file. Check permissions and try again.'
-
 def set_crisis_level(nick, level):
     level = level.lower()
     link = "http://brianauron.info/jeff-existential-crisis-level/"
     if level in jeff_crisis_levels.keys() and get_current_level() != level:
         psql_db.connect()
         JeffCrisis.create(nick = nick, datetime = datetime.now(), level = level)
-        edit_html(level)
         text = "Jeff's existential crisis level has been set to " + level
     elif get_current_level() == level:
         text = "Jeff's existential crisis level is already {0}, ya jerk!".format(level)

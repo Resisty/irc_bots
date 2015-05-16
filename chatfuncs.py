@@ -87,6 +87,11 @@ def come_to_seattle(data, match):
     data['reply'] = 'public'
     return data
 
+def come_to_cleveland(data, match):
+    data['msg'] = ['https://www.youtube.com/watch?v=ysmLA5TqbIY']
+    data['reply'] = 'public'
+    return data
+
 def roll_dice(data, match):
     dicestr = match.groups()[1]
     modifiers = match.groups()[5].split()
