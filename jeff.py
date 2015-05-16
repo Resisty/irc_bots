@@ -7,7 +7,7 @@
 #
 #  Creation Date : 01-05-2015
 #
-#  Last Modified : Fri 15 May 2015 08:39:49 PM CDT
+#  Last Modified : Fri 15 May 2015 08:44:19 PM CDT
 #
 #  Created By : Brian Auron
 #
@@ -105,6 +105,7 @@ def jeff_info(data, match):
     print verb
     if verb in jeff_crisis_levels.keys():
         data['msg'] = [set_crisis_level(data['nick'], verb)]
+        data['msg'].append('http://brianauron.info/jeff-existential-crisis-level/')
     elif verb in ['list', 'enumerate', 'print']:
         data['msg'] = [', '.join(jeff_crisis_levels.keys())]
     elif verb in ['link', 'url']:
