@@ -7,7 +7,7 @@
 #
 #  Creation Date : 01-05-2015
 #
-#  Last Modified : Fri 15 May 2015 08:44:19 PM CDT
+#  Last Modified : Tue 19 May 2015 02:45:46 PM CDT
 #
 #  Created By : Brian Auron
 #
@@ -19,7 +19,6 @@ import peewee
 import os
 import yaml
 from playhouse.postgres_ext import PostgresqlExtDatabase
-from datetime import date, datetime, timedelta
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 yaml_loc = os.path.join(BASE_DIR, 'panicbutt2.yaml')
@@ -84,7 +83,7 @@ def set_crisis_level(nick, level):
     link = "http://brianauron.info/jeff-existential-crisis-level/"
     if level in jeff_crisis_levels.keys() and get_current_level() != level:
         psql_db.connect()
-        JeffCrisis.create(nick = nick, datetime = datetime.now(), level = level)
+        JeffCrisis.create(nick = nick, datetime = datetime.datetime.now(), level = level)
         text = "Jeff's existential crisis level has been set to " + level
     elif get_current_level() == level:
         text = "Jeff's existential crisis level is already {0}, ya jerk!".format(level)
