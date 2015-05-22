@@ -134,7 +134,7 @@ def butts_me(data, match):
     jdata = json.loads(results.text)
     try:
         data['msg'] = [jdata['data']['image_original_url']]
-    except KeyError as e:
+    except (TypeError, KeyError) as e:
         data['msg'] = ['That\'s a stupid search!']
     data['reply'] = 'public'
     return data
