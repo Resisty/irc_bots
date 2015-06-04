@@ -27,7 +27,7 @@ def panicbutt_help(data, match):
     newdata['reply'] = 'private'
     return newdata
 
-mapping =  {  '^panicbutt ([\s\w\']+) Jeff($| becomes sane)':
+mapping =  {  '^panicbutt ([\s\w\']+) Jeff($| becomes sane| graduates)':
                  { 'func': jeff.jeff_info,
                    'i': True,
                    'help': '"panicbutt [question] Jeff [state of being]" Access panicbutt\'s wealth of knowledge and power on Jeff. Options: [list,enumerate,print], [url,link], [level from "list"], [how long, when will <requires [state of being]>].'},
@@ -147,4 +147,9 @@ mapping =  {  '^panicbutt ([\s\w\']+) Jeff($| becomes sane)':
                   { 'func': snorts.count_get,
                     'i': True,
                     'help': '"panicbutt print <variable>" print the variable'},
+
+              '^panicbutt list counts$':
+                  { 'func': snorts.count_list,
+                    'i': True,
+                    'help': '"panicbutt list counts" will show all keys being counted in the database'},
 }

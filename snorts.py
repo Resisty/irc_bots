@@ -7,7 +7,7 @@
 #
 #  Creation Date : 03-05-2015
 #
-#  Last Modified : Fri 08 May 2015 01:35:09 PM CDT
+#  Last Modified : Thu 04 Jun 2015 03:58:45 PM CDT
 #
 #  Created By : Brian Auron
 #
@@ -123,5 +123,14 @@ def count_get(data, match):
         data['msg'] = [str(Counts.get(Counts.key == key).count)]
     except peewee.DoesNotExist:
         data['msg'] = ['None']
+    data['reply'] = 'public'
+    return data
+
+@connect
+def count_list(data, match):
+    try:
+        data['msg'] = [', '.join([i.key for i in Counts.select()])]
+    except peewee.DoesNotExist:
+        data['msg'] = ['Could not find keys for counts!']
     data['reply'] = 'public'
     return data

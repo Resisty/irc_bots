@@ -147,7 +147,7 @@ def urban(data, match):
     what = what.replace(' ', '%20')
     which = match.groups()[2]
     if which:
-        which = int(match.groups()[2].strip().split('#')[1])
+        which = int(match.groups()[2].strip().split('#')[1]) - 1
     else:
         which = 0
     url = 'http://api.urbandictionary.com/v0/define?term={0}'
