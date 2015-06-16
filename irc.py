@@ -7,7 +7,7 @@
 #
 #  Creation Date : 30-04-2015
 #
-#  Last Modified : Wed 03 Jun 2015 02:20:07 PM CDT
+#  Last Modified : Fri 05 Jun 2015 02:36:13 PM CDT
 #
 #  Created By : Brian Auron
 #
@@ -29,6 +29,7 @@ class IRC(object):
                      'type': None, 'channel': self.channel,
                      'reply': 'public', 'nicks': self.getnicks}
         self.host = server, port
+        self.rejoin = rejoin
 
     def connect(self):
         self._socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)

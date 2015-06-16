@@ -94,8 +94,11 @@ def come_to_cleveland(data, match):
 
 def roll_dice(data, match):
     dicestr = match.groups()[1]
-    modifiers = match.groups()[5].split()
-    print modifiers
+    try:
+        modifiers = match.groups()[5].split()
+    except AttributeError as e:
+        print 'Unable to find modifiers groups because "{}"'.format(e)
+        modifiers = None
     if not modifiers:
         modifiers = [0]
     else:
