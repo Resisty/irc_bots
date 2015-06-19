@@ -7,7 +7,7 @@
 #
 #  Creation Date : 30-04-2015
 #
-#  Last Modified : Fri 05 Jun 2015 02:36:13 PM CDT
+#  Last Modified : Fri 19 Jun 2015 02:43:44 PM CDT
 #
 #  Created By : Brian Auron
 #
@@ -17,19 +17,28 @@ import re
 import copy
 import mapping
 import sys
+import threading, Queue
+import time
 
 RECV_BYTES = 2 ** 12
 
 class IRC(object):
-    def __init__(self, server, port, nick, user, channel, rejoin=False):
+    def __init__(self, server, port, nick, user, channel, rejoin=False, password = None):
         self.nick = nick
         self.user = user
         self.channel = channel
+        self.password = password
         self.data = {'nick': self.nick, 'msg': '',
                      'type': None, 'channel': self.channel,
                      'reply': 'public', 'nicks': self.getnicks}
         self.host = server, port
         self.rejoin = rejoin
+        self.queue = Queue.Queue()
+
+    def queue_thread(self):
+        self.send_thread = threading.Thread(target = self.socket_send)
+        self.send_thread.daemon = True
+        self.send_thread.start()
 
     def connect(self):
         self._socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -37,6 +46,20 @@ class IRC(object):
         self.setnick()
         self.setuser()
         self.join()
+        self.queue_thread()
+
+    def socket_send(self):
+        while True:
+            try:
+                msg = self.queue.get_nowait()
+            except Queue.Empty:
+                time.sleep(0.1)
+                continue
+            self._socket.send(msg)
+            time.sleep(0.8)
+
+    def put(self, msg):
+        self.queue.put_nowait(msg)
 
     def send_command(self, command, *args, **kwargs):
         try:
@@ -46,7 +69,7 @@ class IRC(object):
         args = [command] + list(args)
         if data:
             args.append(':' + data)
-        self._socket.send(' '.join(args) + '\r\n')
+        self.put(' '.join(args) + '\r\n')
 
     def setnick(self):
         self.send_command('NICK', self.nick)
@@ -55,7 +78,10 @@ class IRC(object):
         self.send_command('USER', self.user, self.user, self.user, data = 'Python IRC')
 
     def join(self):
-        self.send_command('JOIN', self.channel)
+        joinstr = self.channel
+        if self.password:
+            joinstr += ' {}'.format(self.password)
+        self.send_command('JOIN', joinstr)
 
     def chunk_message(self, line):
         n = 400 # Assuming 510 character messages plus channel, nick, and
@@ -120,8 +146,8 @@ class IRC(object):
             case = re.IGNORECASE if stuff['i'] else 0
             match = re.search(regex, self.data['msg'], case)
             if match:
-                print stuff['func']
-                tmp.append(stuff['func'](copy.deepcopy(self.data), match))
+                data = dict(self.data)
+                tmp.append(stuff['func'](data, match))
         self.data['msg'] = tmp
 
     def run(self, blocking=True):
@@ -130,9 +156,9 @@ class IRC(object):
 
     def getnicks(self):
         self.send_command('NAMES', self.channel)
-        self.data = self._socket.recv(RECV_BYTES)
-        self.data = self.data.split('\r\n')
-        for line in self.data:
+        nickdata = self._socket.recv(RECV_BYTES)
+        nickdata = nickdata.split('\r\n')
+        for line in nickdata:
             if not line:
                 continue
             # nicks come after a colon after a space after the channel name
