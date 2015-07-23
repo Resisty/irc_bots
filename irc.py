@@ -7,7 +7,7 @@
 #
 #  Creation Date : 30-04-2015
 #
-#  Last Modified : Fri 19 Jun 2015 02:43:44 PM CDT
+#  Last Modified : Thu 23 Jul 2015 06:13:21 PM CDT
 #
 #  Created By : Brian Auron
 #
@@ -131,11 +131,13 @@ class IRC(object):
     def reload_map(self):
         print 'Reloading!'
         reload(mapping)
-        retval = copy.deepcopy(self.data)
+        retval = {}
         retval['msg'] = ['Reloaded']
+        retval['reply'] = 'public'
+        retval['channel'] = self.data['channel']
+        retval['nick'] = self.data['nick']
         print 'retval in reload_map: "{0}"'.format(retval)
         return [retval]
-
 
     def get_replies(self):
         if self.data['msg'] == '{0} reload'.format(self.nick).lower():

@@ -47,10 +47,10 @@ mapping =  {  '^panicbutt ([\s\w\']+) Jeff($| becomes sane| graduates)':
                    'i': True,
                    'help': '"fuck you/off, panicbutt" comma is optional. Panicbutt is just trying to help, jeez'},
 
-             'cortana':
+             'Cortana':
                  { 'func': chatfuncs.cortana,
-                   'i': True,
-                   'help': 'Any mention of cortana will summon the AI who helped to save the galaxy.'},
+                   'i': False,
+                   'help': 'Any mention of "Cortana" will summon the AI who helped to save the galaxy.'},
 
              '^panicbutt define windows error message (.*)$':
                  { 'func': chatfuncs.windows_error,
