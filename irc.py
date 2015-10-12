@@ -7,7 +7,7 @@
 #
 #  Creation Date : 30-04-2015
 #
-#  Last Modified : Thu 23 Jul 2015 06:13:21 PM CDT
+#  Last Modified : Tue 06 Oct 2015 09:55:18 AM CDT
 #
 #  Created By : Brian Auron
 #
@@ -19,6 +19,7 @@ import mapping
 import sys
 import threading, Queue
 import time
+import datetime
 
 RECV_BYTES = 2 ** 12
 
@@ -91,7 +92,8 @@ class IRC(object):
 
     def manhandle_data(self):
         self.data['msg'] = self._socket.recv(RECV_BYTES)
-        print 'Got data: "{0}"'.format(self.data['msg'])
+        now = str(datetime.datetime.now())
+        print '[{}] Got data: "{}"'.format(now, self.data['msg'])
         # Do way more clever shit here, like (re)import msg_funcs or something
         self.classify()
         # allow perusal of channels if need be

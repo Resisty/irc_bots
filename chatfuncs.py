@@ -214,3 +214,11 @@ def this_is_fine(data, match):
     data['msg'] = ['http://gunshowcomic.com/648']
     data['reply'] = 'public'
     return data
+
+def ping(data, match):
+    letter = match.groups()[0]
+    msg = 'ong' if letter.islower() else 'ONG'
+    msg = letter+msg
+    data['msg'] = [msg]
+    data['reply'] = 'public'
+    return data
