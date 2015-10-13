@@ -7,7 +7,7 @@
 #
 #  Creation Date : 30-04-2015
 #
-#  Last Modified : Tue 06 Oct 2015 09:55:18 AM CDT
+#  Last Modified : Tue 13 Oct 2015 12:45:12 PM CDT
 #
 #  Created By : Brian Auron
 #
@@ -69,7 +69,7 @@ class IRC(object):
             data = None
         args = [command] + list(args)
         if data:
-            args.append(':' + data)
+            args.append(data)
         self.put(' '.join(args) + '\r\n')
 
     def setnick(self):
