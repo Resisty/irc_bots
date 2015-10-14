@@ -217,7 +217,7 @@ def this_is_fine(data, match):
 
 def ping(data, match):
     letter = match.groups()[0]
-    msg = 'ong' if letter.islower() else 'ONG'
+    msg = 'ong' if letter[-1].islower() else 'ONG'
     msg = letter+msg
     data['msg'] = [msg]
     data['reply'] = 'public'
