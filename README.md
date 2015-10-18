@@ -1,9 +1,6 @@
 # IRC Bots
-Various bots written in ruby using cinch.
-
-###OR
-
-Various bots written in python using sockets.
+IRC bot """framework""" written in python using sockets.
+Some customizations already included.
 
 ##Requirements
 - cinch==2.2.4
