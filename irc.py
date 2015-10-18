@@ -7,7 +7,7 @@
 #
 #  Creation Date : 30-04-2015
 #
-#  Last Modified : Tue 13 Oct 2015 12:45:12 PM CDT
+#  Last Modified : Thu 15 Oct 2015 05:44:32 PM CDT
 #
 #  Created By : Brian Auron
 #
@@ -56,6 +56,7 @@ class IRC(object):
             except Queue.Empty:
                 time.sleep(0.1)
                 continue
+            print 'Sending msg to socket: "{}"'.format(msg)
             self._socket.send(msg)
             time.sleep(0.8)
 
@@ -70,7 +71,9 @@ class IRC(object):
         args = [command] + list(args)
         if data:
             args.append(data)
-        self.put(' '.join(args) + '\r\n')
+        msg = ' '.join(args) + '\r\n'
+        print 'Putting msg in queue: "{}"'.format(msg)
+        self.put(msg)
 
     def setnick(self):
         self.send_command('NICK', self.nick)
@@ -110,6 +113,7 @@ class IRC(object):
                 # with actual data
                 for msg in reply['msg']:
                     for line in self.chunk_message(msg):
+                        print 'Private message to {}: {}'.format(reply['nick'], line)
                         self.send_command('PRIVMSG', reply['nick'], data = line)
             return
         if self.data['type'] == 'PRIVMSG':

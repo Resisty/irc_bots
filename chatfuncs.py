@@ -222,3 +222,13 @@ def ping(data, match):
     data['msg'] = [msg]
     data['reply'] = 'public'
     return data
+
+def annoy_jeff(data, match):
+    chance = random.randint(0, 9)
+    if 'lolrus' in data['nick'].lower() and chance == 9:
+        msg = 'UPDATE YOUR RESUME, SEND IT TO PARSK, AND GET SOME JOB/LIFE BALANCE/SATISFACTION FFS'
+        data['msg'] = [msg]
+        data['reply'] = 'public'
+    else:
+        data['msg'] = []
+    return data

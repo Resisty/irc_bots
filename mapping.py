@@ -156,4 +156,8 @@ mapping =  {  '^panicbutt ([\s\w\']+) Jeff($| becomes sane| graduates)':
                   { 'func': chatfuncs.ping,
                     'i': True,
                     'help': '"PING" will make tell panicbutt you\'re feeling solipsistic and come to the rescue with a reassuring message.'},
+              '^.*$':
+                  { 'func': chatfuncs.annoy_jeff,
+                    'i': True,
+                    'help': 'Every message has a 1 in 10 chance to pester Jeff about his employment/life/happiness.'},
 }
