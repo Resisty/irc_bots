@@ -27,9 +27,11 @@
 import random
 import requests
 import json
+from snorts import *
 
 def manatee_maybe(data, match):
-    if data['msg'] == data['msg'].upper() and len(data['msg']) > 4:
+    nicks = [i.lower() for i in data['nicks']()]
+    if data['msg'] == data['msg'].upper() and len(data['msg']) > 4 and data['msg'].lower() not in nicks:
         manatee = random.randint(1, 33)
         data['msg'] = ['http://calmingmanatee.com/img/manatee{0}.jpg'.format(manatee)]
     else:
@@ -224,9 +226,14 @@ def ping(data, match):
     return data
 
 def annoy_jeff(data, match):
-    chance = random.randint(0, 9)
-    if 'lolrus' in data['nick'].lower() and chance == 9:
-        msg = 'UPDATE YOUR RESUME, SEND IT TO PARSK, AND GET SOME JOB/LIFE BALANCE/SATISFACTION FFS'
+    psql_db.connect()
+    try:
+        num = Counts.get(Counts.key == 'DaysWithoutResume').count
+    except:
+        num = 1
+    chance = random.randint(0, 49)
+    if 'lolrus' in data['nick'].lower() and chance < num:
+        msg = 'UPDATE YOUR RESUME, SEND IT TO DK, AND GET SOME JOB/LIFE BALANCE/SATISFACTION FFS'
         data['msg'] = [msg]
         data['reply'] = 'public'
     else:
