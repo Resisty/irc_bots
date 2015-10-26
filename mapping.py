@@ -22,7 +22,7 @@ reload(snorts)
 
 def panicbutt_help(data, match):
     newdata = data
-    help_lst = [j['help'] for i, j in mapping.iteritems()]
+    help_lst = [j['help'] for i, j in mapping]
     newdata['msg'] = help_lst
     newdata['reply'] = 'private'
     return newdata

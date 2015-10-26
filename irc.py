@@ -7,7 +7,7 @@
 #
 #  Creation Date : 30-04-2015
 #
-#  Last Modified : Mon 26 Oct 2015 02:33:57 PM CDT
+#  Last Modified : Mon 26 Oct 2015 04:36:42 PM CDT
 #
 #  Created By : Brian Auron
 #
@@ -114,7 +114,8 @@ class IRC(object):
                 for msg in reply['msg']:
                     for line in self.chunk_message(msg):
                         print 'Private message to {}: {}'.format(reply['nick'], line)
-                        self.send_command('PRIVMSG', reply['nick'], data = line)
+                        self.send_command('PRIVMSG', reply['nick'],
+                                          data = u': {}'.format(line))
             return
         if self.data['type'] == 'PRIVMSG':
             # do nothing until we have fun stuff to do
@@ -128,7 +129,8 @@ class IRC(object):
                             self.send_command('PRIVMSG', reply['channel'],
                                               data = u':{}: {}'.format(reply['nick'], line))
                         elif reply['reply'] == 'private':
-                            self.send_command('PRIVMSG', reply['nick'], data = line)
+                            self.send_command('PRIVMSG', reply['nick'],
+                                              data = u': {}'.format(line))
                         elif reply['reply'] == 'emote':
                             self.send_command('PRIVMSG', reply['channel'], data = line)
             return
