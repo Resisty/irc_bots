@@ -7,7 +7,7 @@
 #
 #  Creation Date : 03-05-2015
 #
-#  Last Modified : Thu 04 Jun 2015 03:58:45 PM CDT
+#  Last Modified : Mon 26 Oct 2015 01:51:02 PM CDT
 #
 #  Created By : Brian Auron
 #
@@ -42,6 +42,7 @@ class Snorts(BaseModel):
 class Counts(BaseModel):
     key = peewee.CharField(unique=True)
     count = peewee.IntegerField(default=0)
+    day = peewee.DateField(null=True)
 
 
 def connect(func):

@@ -226,16 +226,47 @@ def ping(data, match):
     return data
 
 def annoy_jeff(data, match):
+    data['msg'] = []
+    if not 'lolrus' in data['nick'].lower():
+        print 'didn\'t find lolrus in nick'
+        return data
     psql_db.connect()
     try:
-        num = Counts.get(Counts.key == 'DaysWithoutResume').count
+        previous = Counts.get(Counts.key == 'DaysWithoutResume').day
     except:
-        num = 1
-    chance = random.randint(0, 49)
-    if 'lolrus' in data['nick'].lower() and chance < num:
+        print 'Fucked up trying to get DaysWithoutResume'
+        return data
+    today = datetime.datetime.now().date()
+    print 'Comparing {} > {}'.format(str(today), str(previous))
+    if today > previous:
+        q = (Counts
+             .update(day = today)
+             .where(Counts.key == 'DaysWithoutResume'))
+        q.execute()
         msg = 'UPDATE YOUR RESUME, SEND IT TO DK, AND GET SOME JOB/LIFE BALANCE/SATISFACTION FFS'
         data['msg'] = [msg]
         data['reply'] = 'public'
-    else:
-        data['msg'] = []
+    return data
+
+def halloween(data, match):
+    data['msg'] = []
+    doit = random.randint(0, 99)
+    msgs = ['''It is the middle ground between light and shadow, between science and superstition, and it lies between the pit of man's fears and the summit of his knowledge. This is the dimension of imagination. It is an area which we call the Twilight Zone.''',
+            '''Double, double toil and trouble; Fire burn and cauldron bubble.''',
+            '''Happy Halloween! https://www.youtube.com/watch?v=xpvdAJYvofI''',
+            '''I have seen the dark universe yawning Where the black planets roll without aim, Where they roll in their horror unheeded, Without knowledge, or lustre, or name.''',
+            '''Ph'nglui mglw'nafh Cthulhu R'lyeh wgah'nagl fhtagn. In his house at R'lyeh dead Cthulhu waits dreaming.''',
+            '''Happy Halloween! https://www.youtube.com/watch?v=m9We2XsVZfc''',
+            '''Happy Halloween! https://www.youtube.com/watch?v=xIx_HbmRnQY''',
+            '''Happy Halloween! https://www.youtube.com/watch?v=bebUeWgNkAM''',
+            '''Happy Halloween! https://www.youtube.com/watch?v=O5YQmUIIjvs''',
+            '''Happy Halloween! https://www.youtube.com/watch?v=X6QzbvH-ZNo''',
+            '''Happy Halloween! https://www.youtube.com/watch?v=FeZftK2kO6U''',
+            '''When witches go riding, and black cats are seen, the moon laughs and whispers, 'tis near Halloween.''',
+            '''Hark! Hark to the wind! 'Tis the night, they say, When all souls come back from the far away- The dead, forgotten this many a day!''',
+            '''Happy Halloween! https://www.youtube.com/watch?v=JoqFlPbrd6U''',
+            '''Happy Halloween! https://www.youtube.com/watch?v=PQpBbK7ua-g''']
+
+    if doit == 13: #the spookiest number
+        data['msg'] = [random.choice(msgs)]
     return data

@@ -7,7 +7,7 @@
 #
 #  Creation Date : 30-04-2015
 #
-#  Last Modified : Thu 15 Oct 2015 05:44:32 PM CDT
+#  Last Modified : Mon 26 Oct 2015 02:33:57 PM CDT
 #
 #  Created By : Brian Auron
 #
@@ -150,7 +150,7 @@ class IRC(object):
             self.data['msg'] = self.reload_map()
             return
         tmp = []
-        for regex, stuff in mapping.mapping.iteritems():
+        for regex, stuff in mapping.mapping:
             case = re.IGNORECASE if stuff['i'] else 0
             match = re.search(regex, self.data['msg'], case)
             if match:
