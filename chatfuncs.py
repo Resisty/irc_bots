@@ -228,16 +228,13 @@ def ping(data, match):
 def annoy_jeff(data, match):
     data['msg'] = []
     if not 'lolrus' in data['nick'].lower():
-        print 'didn\'t find lolrus in nick'
         return data
     psql_db.connect()
     try:
         previous = Counts.get(Counts.key == 'DaysWithoutResume').day
     except:
-        print 'Fucked up trying to get DaysWithoutResume'
         return data
     today = datetime.datetime.now().date()
-    print 'Comparing {} > {}'.format(str(today), str(previous))
     if today > previous:
         q = (Counts
              .update(day = today)
@@ -249,8 +246,14 @@ def annoy_jeff(data, match):
     return data
 
 def halloween(data, match):
+    today = datetime.datetime.now().date()
+    halloween = datetime.datetime(today.year, 10, 31).date()
+    diff = (halloween - today).days
+    if diff == 0:
+        diff = .5
+    upper = diff * 10
     data['msg'] = []
-    doit = random.randint(0, 99)
+    doit = random.randint(13, 12 + upper)
     msgs = ['''It is the middle ground between light and shadow, between science and superstition, and it lies between the pit of man's fears and the summit of his knowledge. This is the dimension of imagination. It is an area which we call the Twilight Zone.''',
             '''Double, double toil and trouble; Fire burn and cauldron bubble.''',
             '''Happy Halloween! https://www.youtube.com/watch?v=xpvdAJYvofI''',
@@ -267,6 +270,8 @@ def halloween(data, match):
             '''Happy Halloween! https://www.youtube.com/watch?v=JoqFlPbrd6U''',
             '''Happy Halloween! https://www.youtube.com/watch?v=PQpBbK7ua-g''']
 
-    if doit == 13: #the spookiest number
+    if doit == 13: # the spoopiest number # "spoopy" -snowdn
         data['msg'] = [random.choice(msgs)]
+    else:
+        print 'Rolled {}, no spooky message this time!'.format(str(doit))
     return data
