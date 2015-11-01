@@ -7,7 +7,7 @@
 #
 #  Creation Date : 30-04-2015
 #
-#  Last Modified : Fri 19 Jun 2015 02:42:55 PM CDT
+#  Last Modified : Sun 01 Nov 2015 04:10:56 PM CST
 #
 #  Created By : Brian Auron
 #
@@ -34,6 +34,7 @@ def main():
     kwargs['port'] = yml['port']
     kwargs['user'] = yml['user']
     kwargs['channel'] = yml['channel']
+    kwargs['config'] = config
     try:
         kwargs['password'] = yml['password']
     except KeyError:

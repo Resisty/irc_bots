@@ -163,7 +163,7 @@ mapping =  [  ('^panicbutt ([\s\w\']+) Jeff($| becomes sane| graduates)',
                     'help': 'Every message has a 1 in 10 chance to pester Jeff about his employment/life/happiness.'}),
 
               ('^.*$',
-                  { 'func': chatfuncs.halloween,
+                  { 'func': chatfuncs.seasonal,
                     'i': True,
-                    'help': 'It\'s the most Spooktacular time of year: Shocktober!'}),
+                    'help': 'Gobble gobble!'}),
 ]

@@ -7,7 +7,7 @@
 #
 #  Creation Date : 30-04-2015
 #
-#  Last Modified : Mon 26 Oct 2015 04:36:42 PM CDT
+#  Last Modified : Sun 01 Nov 2015 04:12:57 PM CST
 #
 #  Created By : Brian Auron
 #
@@ -24,14 +24,17 @@ import datetime
 RECV_BYTES = 2 ** 12
 
 class IRC(object):
-    def __init__(self, server, port, nick, user, channel, rejoin=False, password = None):
+    def __init__(self, server, port, nick,
+                 user, channel, rejoin=False, password = None,
+                 config = 'panicbutt2.yaml'):
         self.nick = nick
         self.user = user
         self.channel = channel
         self.password = password
         self.data = {'nick': self.nick, 'msg': '',
                      'type': None, 'channel': self.channel,
-                     'reply': 'public', 'nicks': self.getnicks}
+                     'reply': 'public', 'nicks': self.getnicks,
+                     'config': config}
         self.host = server, port
         self.rejoin = rejoin
         self.queue = Queue.Queue()

@@ -27,6 +27,7 @@
 import random
 import requests
 import json
+import yaml
 from snorts import *
 
 def manatee_maybe(data, match):
@@ -245,33 +246,25 @@ def annoy_jeff(data, match):
         data['reply'] = 'public'
     return data
 
-def halloween(data, match):
+def seasonal(data, match):
+    with open(data['config'], 'r') as fptr:
+        holiday = yaml.load(fptr)['holiday']
     today = datetime.datetime.now().date()
-    halloween = datetime.datetime(today.year, 10, 31).date()
-    diff = (halloween - today).days
+    year = holiday['date']['year_offset']
+    month = holiday['date']['month']
+    day = holiday['date']['day']
+    holidate = datetime.datetime(today.year + year, month, day).date()
+    random_offset = holiday['sig_number']
+    diff = (holidate - today).days
     if diff == 0:
         diff = .5
     upper = diff * 10
     data['msg'] = []
-    doit = random.randint(13, 12 + upper)
-    msgs = ['''It is the middle ground between light and shadow, between science and superstition, and it lies between the pit of man's fears and the summit of his knowledge. This is the dimension of imagination. It is an area which we call the Twilight Zone.''',
-            '''Double, double toil and trouble; Fire burn and cauldron bubble.''',
-            '''Happy Halloween! https://www.youtube.com/watch?v=xpvdAJYvofI''',
-            '''I have seen the dark universe yawning Where the black planets roll without aim, Where they roll in their horror unheeded, Without knowledge, or lustre, or name.''',
-            '''Ph'nglui mglw'nafh Cthulhu R'lyeh wgah'nagl fhtagn. In his house at R'lyeh dead Cthulhu waits dreaming.''',
-            '''Happy Halloween! https://www.youtube.com/watch?v=m9We2XsVZfc''',
-            '''Happy Halloween! https://www.youtube.com/watch?v=xIx_HbmRnQY''',
-            '''Happy Halloween! https://www.youtube.com/watch?v=bebUeWgNkAM''',
-            '''Happy Halloween! https://www.youtube.com/watch?v=O5YQmUIIjvs''',
-            '''Happy Halloween! https://www.youtube.com/watch?v=X6QzbvH-ZNo''',
-            '''Happy Halloween! https://www.youtube.com/watch?v=FeZftK2kO6U''',
-            '''When witches go riding, and black cats are seen, the moon laughs and whispers, 'tis near Halloween.''',
-            '''Hark! Hark to the wind! 'Tis the night, they say, When all souls come back from the far away- The dead, forgotten this many a day!''',
-            '''Happy Halloween! https://www.youtube.com/watch?v=JoqFlPbrd6U''',
-            '''Happy Halloween! https://www.youtube.com/watch?v=PQpBbK7ua-g''']
+    doit = random.randint(random_offset, random_offset - 1 + upper)
+    msgs = holiday['msgs']
 
-    if doit == 13: # the spoopiest number # "spoopy" -snowdn
+    if doit == random_offset:
         data['msg'] = [random.choice(msgs)]
     else:
-        print 'Rolled {}, no spooky message this time!'.format(str(doit))
+        print 'Rolled {}, no seasonal message this time!'.format(str(doit))
     return data
