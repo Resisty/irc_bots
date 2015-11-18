@@ -7,7 +7,7 @@
 #
 #  Creation Date : 30-04-2015
 #
-#  Last Modified : Sun 01 Nov 2015 04:12:57 PM CST
+#  Last Modified : Tue 17 Nov 2015 02:22:04 PM CST
 #
 #  Created By : Brian Auron
 #
@@ -38,6 +38,7 @@ class IRC(object):
         self.host = server, port
         self.rejoin = rejoin
         self.queue = Queue.Queue()
+        self.lastping = datetime.datetime.now()
 
     def queue_thread(self):
         self.send_thread = threading.Thread(target = self.socket_send)
@@ -54,6 +55,12 @@ class IRC(object):
 
     def socket_send(self):
         while True:
+            now = datetime.datetime.now()
+            delta_ping = (now - self.lastping).seconds
+            if delta_ping > 200:
+                print 'No ping in {}. Rejoining.'.format(delta_ping)
+                self.join()
+                self.lastping = now
             try:
                 msg = self.queue.get_nowait()
             except Queue.Empty:
@@ -107,6 +114,9 @@ class IRC(object):
             return
         if self.data['type'] == 'PING':
             self._socket.send(self.data['msg'])
+            now = datetime.datetime.now()
+            self.lastping = now
+            print '[{}] Sending PONG: "{}"'.format(str(now), self.data['msg'])
             return
         if self.data['type'] == 'PRIVMSG' and self.data['channel'] == self.nick:
             # private msg outside of channel
@@ -175,7 +185,11 @@ class IRC(object):
             if not line:
                 continue
             # nicks come after a colon after a space after the channel name
-            nicks = line.split(self.channel, 1)[1].strip(': ')
+            print 'getnicks() DEBUG: line = {}'.format(line)
+            nicks = line.split(self.channel, 1)
+            print 'getnicks() DEBUG: line.split(self.channel, 1) -> nicks = {}'.format(nicks)
+            nicks = nicks[1].strip(': ')
+            print 'getnicks() DEBUG: nicks = nicks[1].strip(\': \') -> nicks = {}'.format(nicks)
             for nick in nicks.split():
                 # strip out op and voice modes
                 yield nick.lstrip('@+')

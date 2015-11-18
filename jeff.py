@@ -7,7 +7,7 @@
 #
 #  Creation Date : 01-05-2015
 #
-#  Last Modified : Fri 22 May 2015 12:51:36 PM CDT
+#  Last Modified : Fri 06 Nov 2015 12:55:37 PM CST
 #
 #  Created By : Brian Auron
 #
@@ -37,13 +37,22 @@ class JeffCrisis(peewee.Model):
     class Meta:
         database = psql_db
 
+class Level(peewee.Model):
+    name = peewee.TextField(unique = True)
+    text = peewee.TextField(default = 'black')
+    font = peewee.TextField(default = 'Lucida Console')
+    bg = peewee.TextField(default = 'critical.gif')
+
+    class Meta:
+        database = psql_db
+
 def create_crisis():
     psql_db.connect()
-    psql_db.create_tables([JeffCrisis])
+    psql_db.create_tables([JeffCrisis, Level])
 
 def drop_crisis():
     psql_db.connect()
-    psql_db.create_tables([JeffCrisis])
+    psql_db.drop_tables([JeffCrisis, Level])
 
 jeff_crisis_levels = {'critical' : {'text' : 'black',
                                     'font' : 'Lucida Console',
@@ -68,29 +77,19 @@ jeff_crisis_levels = {'critical' : {'text' : 'black',
                                           'bg' : "tux.gif"}}
 
 def get_current_level():
-    try:
-        with open('/var/www/html/jeff-existential-crisis-level/jeff-existential-crisis-level.html',
-                  'r') as fptr:
-            html = fptr.read()
-            soup = bs4.BeautifulSoup(html)
-    except IOError as e:
-        return 'Could not read file. Check permissions and try again.'
-    level = soup.find('h1').string.lower()
-    return level
+    recent = JeffCrisis.select().order_by(JeffCrisis.id.desc()).get()
+    return recent.level.lower()
 
 def set_crisis_level(nick, level):
     level = level.lower()
     link = "http://brianauron.info/jeff-existential-crisis-level/"
-    if level in jeff_crisis_levels.keys() and get_current_level() != level:
+    if get_current_level() != level:
         psql_db.connect()
         JeffCrisis.create(nick = nick, datetime = datetime.datetime.now(), level = level)
         text = "Jeff's existential crisis level has been set to " + level
-    elif get_current_level() == level:
-        text = "Jeff's existential crisis level is already {0}, ya jerk!".format(level)
     else:
-        text = "That is not a valid value for Jeff's existential crisis level, dipshit!"
-        end
-        text += "\n{0}".format(link)
+        text = "Jeff's existential crisis level is already {0}, ya jerk!".format(level)
+    text += "\n{0}".format(link)
     return text
 
 def til_sane():
@@ -101,8 +100,8 @@ def til_sane():
 
 def jeff_info(data, match):
     verb = match.groups()[0]
-    print verb
-    if verb in jeff_crisis_levels.keys():
+    verbs = [i.name for i in Level.select()]
+    if verb in verbs:
         data['msg'] = [set_crisis_level(data['nick'], verb)]
         data['msg'].append('http://brianauron.info/jeff-existential-crisis-level/')
     elif verb in ['list', 'enumerate', 'print']:

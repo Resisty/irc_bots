@@ -7,7 +7,7 @@
 #
 #  Creation Date : 03-05-2015
 #
-#  Last Modified : Mon 26 Oct 2015 01:51:02 PM CDT
+#  Last Modified : Tue 17 Nov 2015 11:11:30 AM CST
 #
 #  Created By : Brian Auron
 #
@@ -114,6 +114,19 @@ def count_update(data, match):
         count.count += delta
         count.save()
     data['msg'] =  ['{} is now {}'.format(key, count.count)]
+    data['reply'] = 'public'
+    return data
+
+@connect
+def count_delete(data, match):
+    key = match.groups()[0]
+    try:
+        count = Counts.select().where(Counts.key == key, Counts.count == 0).get()
+        count.delete_instance()
+        msg = '{} has been deleted.'.format(key)
+    except peewee.DoesNotExist:
+        msg = '{} does not exist in the Counts table or it does not have a count of 0!'.format(key)
+    data['msg'] =  [msg]
     data['reply'] = 'public'
     return data
 

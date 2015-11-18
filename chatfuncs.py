@@ -33,8 +33,11 @@ from snorts import *
 def manatee_maybe(data, match):
     nicks = [i.lower() for i in data['nicks']()]
     if data['msg'] == data['msg'].upper() and len(data['msg']) > 4 and data['msg'].lower() not in nicks:
-        manatee = random.randint(1, 33)
-        data['msg'] = ['http://calmingmanatee.com/img/manatee{0}.jpg'.format(manatee)]
+        manatee = random.randint(1, 34)
+        if manatee == 34:
+            data['msg'] = ['http://i.imgur.com/jxvgPhV.jpg']
+        else:
+            data['msg'] = ['http://calmingmanatee.com/img/manatee{0}.jpg'.format(manatee)]
     else:
         data['msg'] = []
     data['reply'] = 'public'
@@ -134,13 +137,17 @@ def butts_me(data, match):
         data['nick'] = who
     what = match.groups()[1]
     what = what.replace(' ', '%20')
-    url = 'http://api.giphy.com/v1/gifs/random?api_key=dc6zaTOxFJmzC&tag={0}'
-    url = url.format(what)
-    results = requests.get(url)
+    imgur_id = '7fd4f416717f07d'
+    headers = {'Authorization': 'Client-ID {}'.format(imgur_id)}
+    url = 'https://api.imgur.com/3/gallery/search'
+    query = '?q={}&q_type=anigif'.format(what)
+    #url = 'http://api.giphy.com/v1/gifs/random?api_key=dc6zaTOxFJmzC&tag={0}'
+    #url = url.format(what)
+    results = requests.get(url+query, headers = headers)
     jdata = json.loads(results.text)
     try:
-        data['msg'] = [jdata['data']['image_original_url']]
-    except (TypeError, KeyError) as e:
+        data['msg'] = [random.choice([i['link'] for i in jdata['data']])]
+    except (TypeError, KeyError, IndexError) as e:
         data['msg'] = ['That\'s a stupid search!']
     data['reply'] = 'public'
     return data
