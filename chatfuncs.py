@@ -86,16 +86,25 @@ def happy_birthday(data, match):
 def come_to_portland(data, match):
     data['msg'] = ['http://imgur.com/29Mr0h']
     data['reply'] = 'public'
+    who = match.groups()[0]
+    if who != 'me':
+        data['nick'] = who
     return data
 
 def come_to_seattle(data, match):
     data['msg'] = ['http://i.imgur.com/Lwo0CTF.gif']
     data['reply'] = 'public'
+    who = match.groups()[0]
+    if who != 'me':
+        data['nick'] = who
     return data
 
 def come_to_cleveland(data, match):
     data['msg'] = ['https://www.youtube.com/watch?v=ysmLA5TqbIY']
     data['reply'] = 'public'
+    who = match.groups()[0]
+    if who != 'me':
+        data['nick'] = who
     return data
 
 def roll_dice(data, match):
@@ -178,7 +187,7 @@ def urban(data, match):
     return data
 
 def haddaway(data, match):
-    data['msg'] = ['Baby don\'t hurt me!  https://www.youtube.com/watch?v=Ktbhw0v186Q']
+    data['msg'] = ['Baby don\'t hurt me!  https://www.youtube.com/watch?v=JRVfysTXhNA']
     data['reply'] = 'public'
     return data
 
@@ -226,9 +235,10 @@ def this_is_fine(data, match):
     return data
 
 def ping(data, match):
-    letter = match.groups()[0]
+    letter = match.groups()[1]
+    pre, suf = match.groups()[0], match.groups()[2]
     msg = 'ong' if letter[-1].islower() else 'ONG'
-    msg = letter+msg
+    msg = pre+letter+msg+suf
     data['msg'] = [msg]
     data['reply'] = 'public'
     return data
@@ -265,7 +275,7 @@ def seasonal(data, match):
     diff = (holidate - today).days
     if diff == 0:
         diff = .5
-    upper = diff * 10
+    upper = diff * 20
     data['msg'] = []
     doit = random.randint(random_offset, random_offset - 1 + upper)
     msgs = holiday['msgs']
