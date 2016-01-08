@@ -162,7 +162,7 @@ mapping =  [  ('^panicbutt ([\s\w\']+) Jeff($| becomes sane| graduates)',
                     'i': True,
                     'help': '"panicbutt list counts" will show all keys being counted in the database'}),
 
-              ('^(["\'\*]*)([a-zA-Z]+)ING(["\'\*]*)( ME( PANICBUTT)?)?$',
+              ('^([^\w\s]*|_*)([a-zA-Z]+)ING([^\w\s]*|_*)( ME( PANICBUTT)?)?$',
                   { 'func': chatfuncs.ping,
                     'i': True,
                     'help': '"PING" will make tell panicbutt you\'re feeling solipsistic and come to the rescue with a reassuring message.'}),

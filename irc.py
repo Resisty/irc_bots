@@ -7,7 +7,7 @@
 #
 #  Creation Date : 30-04-2015
 #
-#  Last Modified : Tue 17 Nov 2015 02:22:04 PM CST
+#  Last Modified : Fri 08 Jan 2016 02:09:18 PM CST
 #
 #  Created By : Brian Auron
 #
@@ -66,6 +66,7 @@ class IRC(object):
             except Queue.Empty:
                 time.sleep(0.1)
                 continue
+            msg = msg.encode('utf-8')
             print 'Sending msg to socket: "{}"'.format(msg)
             self._socket.send(msg)
             time.sleep(0.8)
@@ -104,9 +105,9 @@ class IRC(object):
 
 
     def manhandle_data(self):
-        self.data['msg'] = self._socket.recv(RECV_BYTES)
+        self.data['msg'] = self._socket.recv(RECV_BYTES).decode('utf-8')
         now = str(datetime.datetime.now())
-        print '[{}] Got data: "{}"'.format(now, self.data['msg'])
+        print u'[{}] Got data: "{}"'.format(now, self.data['msg'])
         # Do way more clever shit here, like (re)import msg_funcs or something
         self.classify()
         # allow perusal of channels if need be
@@ -116,7 +117,7 @@ class IRC(object):
             self._socket.send(self.data['msg'])
             now = datetime.datetime.now()
             self.lastping = now
-            print '[{}] Sending PONG: "{}"'.format(str(now), self.data['msg'])
+            print u'[{}] Sending PONG: "{}"'.format(str(now), self.data['msg'])
             return
         if self.data['type'] == 'PRIVMSG' and self.data['channel'] == self.nick:
             # private msg outside of channel
@@ -126,7 +127,7 @@ class IRC(object):
                 # with actual data
                 for msg in reply['msg']:
                     for line in self.chunk_message(msg):
-                        print 'Private message to {}: {}'.format(reply['nick'], line)
+                        print u'Private message to {}: {}'.format(reply['nick'], line)
                         self.send_command('PRIVMSG', reply['nick'],
                                           data = u': {}'.format(line))
             return
@@ -166,7 +167,11 @@ class IRC(object):
             return
         tmp = []
         for regex, stuff in mapping.mapping:
-            case = re.IGNORECASE if stuff['i'] else 0
+            case = (re.IGNORECASE if stuff['i'] else 0) | re.U
+            print 'Checking regex against msg with case:'
+            print regex
+            print self.data['msg']
+            print case
             match = re.search(regex, self.data['msg'], case)
             if match:
                 data = dict(self.data)
