@@ -285,3 +285,8 @@ def seasonal(data, match):
     else:
         print 'Rolled {}, no seasonal message this time!'.format(str(doit))
     return data
+
+def great_day(data, match):
+    data['msg'] = ['https://www.youtube.com/watch?v=WRu_-9MBpd4']
+    data['reply'] = 'public'
+    return data

@@ -176,4 +176,9 @@ mapping =  [  ('^panicbutt ([\s\w\']+) Jeff($| becomes sane| graduates)',
                   { 'func': chatfuncs.seasonal,
                     'i': True,
                     'help': 'Gobble gobble!'}),
+
+              ('(it\'s gonna be a )*great day',
+                  { 'func': chatfuncs.great_day,
+                    'i': True,
+                    'help': 'The birds are chirping "Tweedle-ee deet!"'}),
 ]
